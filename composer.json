@@ -1,6 +1,6 @@
 {
 
-    "name": "oat/extension-tao-client-restrict",
+    "name": "oat-sa/extension-tao-client-restrict",
     "description" : "",
     "type" : "tao-extension",
     "authors" : [
