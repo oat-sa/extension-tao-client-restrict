@@ -21,8 +21,6 @@ namespace oat\taoClientRestrict\model\requirements;
 
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
-use oat\oatbox\service\ServiceManager;
-use oat\taoClientDiagnostic\model\ClientDetectService;
 
 /**
  * Service to manage the authoring of deliveries
@@ -32,8 +30,6 @@ abstract class Base extends \tao_models_classes_ClassService
 
     /** @var core_kernel_classes_Class */
     protected $makeClass;
-
-    protected $detectedClient;
 
     /**
      * @var core_kernel_classes_Class
@@ -82,15 +78,13 @@ abstract class Base extends \tao_models_classes_ClassService
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    protected function getClientInfo()
-    {
+    abstract public function getClientName();
 
-        if (!$this->detectedClient) {
-            $this->detectedClient = ServiceManager::getServiceManager()->get(ClientDetectService::SERVICE_ID)->getClientInfo();
-        }
+    /**
+     * @return string
+     */
+    abstract public function getClientVersion();
 
-        return $this->detectedClient;
-    }
 }

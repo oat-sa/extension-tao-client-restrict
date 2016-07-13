@@ -18,6 +18,7 @@
  *
  */
 namespace oat\taoClientRestrict\model\requirements;
+use Sinergi\BrowserDetector\Os;
 
 /**
  * Service to manage the authoring of deliveries
@@ -39,7 +40,7 @@ class OSService extends Base
      */
     public function getClientName()
     {
-        return $this->getClientInfo()->os->name;
+        return (new Os())->getName();
     }
 
     /**
@@ -47,7 +48,7 @@ class OSService extends Base
      */
     public function getClientVersion()
     {
-        return $this->getClientInfo()->os->version->value;
+        return (new Os())->getVersion();
     }
 
 }

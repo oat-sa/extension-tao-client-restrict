@@ -18,6 +18,7 @@
  *
  */
 namespace oat\taoClientRestrict\model\requirements;
+use Sinergi\BrowserDetector\Browser;
 
 /**
  * Service to manage the authoring of deliveries
@@ -38,7 +39,7 @@ class WebBrowserService extends Base
      */
     public function getClientName()
     {
-        return $this->getClientInfo()->browser->name;
+        return (new Browser())->getName();
     }
 
     /**
@@ -46,7 +47,7 @@ class WebBrowserService extends Base
      */
     public function getClientVersion()
     {
-        return $this->getClientInfo()->browser->version->value;
+        return (new Browser())->getVersion();
     }
 
 }
