@@ -24,7 +24,10 @@ module.exports = function (grunt) {
             baseUrl: '../js',
             dir: out,
             mainConfigFile: './config/requirejs.build.js',
-            paths: {'taoClientRestrict': root + '/taoClientRestrict/views/js'},
+            paths: {
+                'taoClientRestrict': root + '/taoClientRestrict/views/js',
+                'taoClientRestrictCss': root + '/taoClientRestrict/views/css',
+            },
             modules: [{
                 name: 'taoClientRestrict/controller/routes',
                 include: ext.getExtensionsControllers(['taoClientRestrict']),
