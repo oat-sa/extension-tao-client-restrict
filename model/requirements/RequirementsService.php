@@ -42,7 +42,6 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
      */
     public function compliesToDelivery($deliveryId)
     {
-        return false;
         $delivery = $this->getResource($deliveryId);
         $isBrowserApproved = true;
         $isOSApproved = true;
