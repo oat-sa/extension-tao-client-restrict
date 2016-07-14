@@ -21,7 +21,7 @@ define([
     'jquery',
     'ui/tooltipster',
     'select2',
-    'css!taoDeliveryCss/web-browsers-form'
+    'css!taoClientRestrictCss/web-browsers-form'
 ], function ($, tooltipster) {
     'use strict';
 
