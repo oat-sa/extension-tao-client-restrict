@@ -20,8 +20,7 @@
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientRestrict\model\requirements\OSService;
-
+use oat\tao\model\entryPoint\EntryPointService;
 
 /**
  *
@@ -37,7 +36,11 @@ class Error extends \tao_actions_SaSModule
      */
     public function notCompatibleEnvironment()
     {
+        $entryPoints = $this->getServiceManager()->get(EntryPointService::SERVICE_ID)->getEntryPoints();
+        $deliveryServerUrl = $entryPoints['deliveryServer']->getUrl();
+
         $this->setData('client_config_url', $this->getClientConfigUrl());
+        $this->setData('returnUrl', $deliveryServerUrl);
         $this->setData('showControls', false);
         $this->setData('userLabel', \common_session_SessionManager::getSession()->getUserLabel());
         $this->setData('content-template', 'Error/notCompatibleEnvironment.tpl');
