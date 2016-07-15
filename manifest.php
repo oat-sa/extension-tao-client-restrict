@@ -1,6 +1,4 @@
 <?php
-use oat\taoClientRestrict\install\RegisterAuthProvider;
-use oat\taoClientRestrict\controller\Error;
 /**  
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +18,21 @@ use oat\taoClientRestrict\controller\Error;
  *               
  * 
  */               
+use oat\taoClientRestrict\install\RegisterAuthProvider;
+use oat\taoClientRestrict\controller\Error;
 
 return array(
     'name' => 'taoClientRestrict',
-	'label' => 'Client Restrictions',
-	'description' => '',
+    'label' => 'Client Restrictions',
+    'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '0.1',
-	'author' => 'Open Assessment Technologies SA',
-	'requires' => array(
+    'version' => '1.0.0',
+    'author' => 'Open Assessment Technologies SA',
+    'requires' => array(
         'taoDelivery' => '>=3.7.0',
-	    'taoBackOffice' => '>=0.8'
+        'taoBackOffice' => '>=0.8'
     ),
-	'managementRole' => 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager',
+    'managementRole' => 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager',
     'acl' => array(
         array('grant', 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager', array('ext'=>'taoClientRestrict')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('controller'=>Error::class)),
@@ -52,16 +52,16 @@ return array(
     'routes' => array(
         '/taoClientRestrict' => 'oat\\taoClientRestrict\\controller'
     ),    
-	'constants' => array(
-	    # views directory
-	    "DIR_VIEWS" => __DIR__.DIRECTORY_SEPARATOR."views".DIRECTORY_SEPARATOR,
-	    
-		#BASE URL (usually the domain root)
-		'BASE_URL' => ROOT_URL.'taoClientRestrict/',
-	    
-	    #BASE WWW required by JS
-	    'BASE_WWW' => ROOT_URL.'taoClientRestrict/views/'
-	),
+    'constants' => array(
+        # views directory
+        "DIR_VIEWS" => __DIR__.DIRECTORY_SEPARATOR."views".DIRECTORY_SEPARATOR,
+        
+            #BASE URL (usually the domain root)
+            'BASE_URL' => ROOT_URL.'taoClientRestrict/',
+        
+            #BASE WWW required by JS
+            'BASE_WWW' => ROOT_URL.'taoClientRestrict/views/'
+    ),
     'extra' => array(
         'structures' => __DIR__.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.'structures.xml',
     )
