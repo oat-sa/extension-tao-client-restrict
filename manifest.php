@@ -20,13 +20,14 @@
  */               
 use oat\taoClientRestrict\install\RegisterAuthProvider;
 use oat\taoClientRestrict\controller\Error;
+use oat\taoClientRestrict\scripts\update\Updater;
 
 return array(
     'name' => 'taoClientRestrict',
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'taoDelivery' => '>=3.7.0',
@@ -49,6 +50,7 @@ return array(
     ),
     'uninstall' => array(
     ),
+    'update' => Updater::class,
     'routes' => array(
         '/taoClientRestrict' => 'oat\\taoClientRestrict\\controller'
     ),    
