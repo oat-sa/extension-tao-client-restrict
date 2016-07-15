@@ -46,26 +46,18 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         $isBrowserApproved = true;
         $isOSApproved = true;
 
-        try {
-            $isBrowserRestricted = $delivery->getUniquePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
-            if (self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
-                //@TODO property caching  - anyway we are operating with complied
-                $browsers = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER));
-                $isBrowserApproved = $this->complies($browsers->toArray(), WebBrowserService::class);
-            }
-        } catch (\core_kernel_classes_EmptyProperty $e) {
-            $isBrowserApproved = true;
+        $isBrowserRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
+        if (!is_null($isBrowserRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
+            //@TODO property caching  - anyway we are operating with complied
+            $browsers = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER));
+            $isBrowserApproved = $this->complies($browsers->toArray(), WebBrowserService::class);
         }
-        
-        try {
-            $isOSRestricted = $delivery->getUniquePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
-            if (self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
-                //@TODO property caching  - anyway we are operating with complied
-                $OS = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS));
-                $isOSApproved = $this->complies($OS->toArray(), OSService::class);
-            }
-        } catch (\core_kernel_classes_EmptyProperty $e) {
-            $isOSApproved = true;
+
+        $isOSRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
+        if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
+            //@TODO property caching  - anyway we are operating with complied
+            $OS = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS));
+            $isOSApproved = $this->complies($OS->toArray(), OSService::class);
         }
 
         return $isBrowserApproved && $isOSApproved;
