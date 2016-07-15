@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE structures SYSTEM "../../tao/doc/structures.dtd">
+<structures>
+
+    <structure id="settings" name="Settings" level="12" group="invisible">
+        <description>Web Browsers Lists</description>
+        <sections>
+            <section id="manage_browsers" name="Web Browsers Lists" url="/taoClientRestrict/WebBrowsers/index">
+                <trees>
+                    <tree name="Browser Lists"
+                          className="Browser Lists"
+                          dataUrl="/taoClientRestrict/WebBrowsers/getOntologyData"
+                          rootNode="http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser"
+                          selectClass="web-browser-class-properties"
+                          selectInstance="web-browser-properties"
+                          delete="web-browser-delete"
+                    />
+                </trees>
+                <actions>
+                    <action id="web-browser-class-properties" name="Properties"
+                            url="/taoClientRestrict/WebBrowsers/editClassProperties" group="content" context="class">
+                        <icon id="icon-edit"/>
+                    </action>
+                    <action id="web-browser-class-new" name="New Class" url="/taoClientRestrict/WebBrowsers/addSubClass"
+                            context="resource" group="tree" binding="subClass">
+                        <icon id="icon-folder-open"/>
+                    </action>
+                    <action id="web-browser-properties" name="Properties" url="/taoClientRestrict/WebBrowsers/editInstance"
+                            group="content" context="instance">
+                        <icon id="icon-edit"/>
+                    </action>
+                    <action id="web-browser-delete" name="Delete" url="/taoClientRestrict/WebBrowsers/delete"
+                            context="resource" group="tree" binding="removeNode">
+                        <icon id="icon-bin"/>
+                    </action>
+                    <action id="web-browser-new" name="Add" url="/taoClientRestrict/WebBrowsers/addInstance"
+                            context="resource"
+                            group="tree" binding="instanciate">
+                        <icon id="icon-add"/>
+                    </action>
+                </actions>
+            </section>
+            <section id="manage_os" name="OS Lists" url="/taoClientRestrict/OS/index">
+                <trees>
+                    <tree name="OS Lists"
+                          className="OS Lists"
+                          dataUrl="/taoClientRestrict/OS/getOntologyData"
+                          rootNode="http://www.tao.lu/Ontologies/TAODelivery.rdf#OS"
+                          selectClass="os-class-properties"
+                          selectInstance="os-properties"
+                          delete="os-delete"
+                    />
+                </trees>
+                <actions>
+                    <action id="os-class-properties" name="Properties" url="/taoClientRestrict/OS/editClassProperties"
+                            group="content" context="class">
+                        <icon id="icon-edit"/>
+                    </action>
+                    <action id="os-class-new" name="New Class" url="/taoClientRestrict/OS/addSubClass" context="resource"
+                            group="tree" binding="subClass">
+                        <icon id="icon-folder-open"/>
+                    </action>
+                    <action id="os-properties" name="Properties" url="/taoClientRestrict/OS/editInstance" group="content"
+                            context="instance">
+                        <icon id="icon-edit"/>
+                    </action>
+                    <action id="os-delete" name="Delete" url="/taoClientRestrict/OS/delete" context="resource"
+                            group="tree" binding="removeNode">
+                        <icon id="icon-bin"/>
+                    </action>
+                    <action id="os-new" name="Add" url="/taoClientRestrict/OS/addInstance" context="resource" group="tree"
+                            binding="instanciate">
+                        <icon id="icon-add"/>
+                    </action>
+                </actions>
+            </section>
+        </sections>
+    </structure>
+</structures>
