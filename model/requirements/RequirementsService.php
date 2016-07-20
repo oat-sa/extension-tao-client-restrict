@@ -77,17 +77,20 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
         foreach ($conditions as $condition) {
-            /** @var \core_kernel_classes_Resource $requiredName */
-            $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
+            // Make sure there is still a resource in database for the Resource's URI.
+            if ($condition->exists() === true) {
+                /** @var \core_kernel_classes_Resource $requiredName */
+                $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
 
-            if (!($conditionService::singleton()->getClientNameResource()->equals($requiredName))) {
-                \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}");
-                continue;
-            }
+                if (!($conditionService::singleton()->getClientNameResource()->equals($requiredName))) {
+                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}");
+                    continue;
+                }
 
-            $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
-            if (-1 !== version_compare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
-                $result = true;
+                $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
+                if (-1 !== version_compare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
+                    $result = true;
+                }
             }
         }
 
