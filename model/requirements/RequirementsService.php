@@ -72,6 +72,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     {
         $clientName = $conditionService::singleton()->getClientName();
         $clientVersion = $conditionService::singleton()->getClientVersion();
+        $clientResource = $conditionService::singleton()->getClientNameResource();
         \common_Logger::i("Detected client: ${clientName} @ ${clientVersion}");
 
         $result = false;
@@ -82,14 +83,15 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
 
-                if (!($conditionService::singleton()->getClientNameResource()->equals($requiredName))) {
-                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}");
+                if (!($clientResource->equals($requiredName))) {
+                    \common_Logger::i("Client rejected. Client name ${clientName} doesn't match ".$requiredName->getUri());
                     continue;
                 }
 
                 $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
                 if (-1 !== version_compare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
                     $result = true;
+                    break;
                 }
             }
         }
