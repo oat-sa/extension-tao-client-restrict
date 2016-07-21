@@ -84,7 +84,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
 
                 if (!($clientResource->equals($requiredName))) {
-                    \common_Logger::i("Client rejected. Client name ${clientName} doesn't match ".$requiredName->getUri());
+                    \common_Logger::d("Client rejected. Client name ${clientName} doesn't match ".$requiredName->getUri());
                     continue;
                 }
 
