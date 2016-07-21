@@ -63,7 +63,7 @@ abstract class Base extends \tao_models_classes_ClassService
 
         $results = $this->makeClass->searchInstances([
             RDFS_LABEL => $detectedName
-        ]);
+        ], ['like' => false]);
 
         $result = array_pop($results);
 
