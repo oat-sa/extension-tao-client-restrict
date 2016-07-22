@@ -78,11 +78,11 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
         foreach ($conditions as $condition) {
-            if ($condition->exists()) {
+            if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
                 $clientNameResource = $conditionService::singleton()->getClientNameResource();
-                \common_Logger::i(var_export($clientNameResource, true));
+                
                 if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
                     \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
                     continue;
