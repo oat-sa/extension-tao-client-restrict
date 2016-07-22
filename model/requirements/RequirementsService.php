@@ -78,13 +78,16 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
         foreach ($conditions as $condition) {
-            // Make sure there is still a resource in database for the Resource's URI.
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
-
-                if (!($clientResource->equals($requiredName))) {
-                    \common_Logger::d("Client rejected. Client name ${clientName} doesn't match ".$requiredName->getUri());
+                $clientNameResource = $conditionService::singleton()->getClientNameResource();
+                
+                if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
+                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
+                    continue;
+                } elseif ($clientNameResource === null) {
+                    \common_Logger::i("Client rejected. Unknown client.");
                     continue;
                 }
 
