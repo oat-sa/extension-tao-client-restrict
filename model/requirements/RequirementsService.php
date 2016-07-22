@@ -79,9 +79,13 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         foreach ($conditions as $condition) {
             /** @var \core_kernel_classes_Resource $requiredName */
             $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
-
-            if (!($conditionService::singleton()->getClientNameResource()->equals($requiredName))) {
-                \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}");
+            $clientNameResource = $conditionService::singleton()->getClientNameResource();
+            \common_Logger::i(var_export($clientNameResource, true));
+            if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
+                \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
+                continue;
+            } elseif ($clientNameResource === null) {
+                \common_Logger::i("Client rejected. Unknown client.");
                 continue;
             }
 
