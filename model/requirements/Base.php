@@ -55,24 +55,17 @@ abstract class Base extends \tao_models_classes_ClassService
     }
 
     /**
-     * @return core_kernel_classes_Resource
+     * @return core_kernel_classes_Resource|null
      */
     public function getClientNameResource()
     {
         $detectedName = $this->getClientName();
 
-        $results = $this->makeClass->searchInstances([
-            RDFS_LABEL => $detectedName
-        ]);
+        $results = $this->makeClass->searchInstances(
+        [ RDFS_LABEL => $detectedName ],
+        [ 'like' => false ]);
 
         $result = array_pop($results);
-
-        if (!$result) {
-            $result = $this->makeClass->createInstanceWithProperties([
-                RDFS_LABEL => $detectedName,
-                static::MAKE_CLASS => $detectedName,
-            ]);
-        }
 
         return $result;
     }

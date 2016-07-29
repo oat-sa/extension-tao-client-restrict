@@ -72,24 +72,28 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     {
         $clientName = $conditionService::singleton()->getClientName();
         $clientVersion = $conditionService::singleton()->getClientVersion();
+        $clientNameResource = $conditionService::singleton()->getClientNameResource();
         \common_Logger::i("Detected client: ${clientName} @ ${clientVersion}");
 
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
         foreach ($conditions as $condition) {
-            // Make sure there is still a resource in database for the Resource's URI.
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
-
-                if (!($conditionService::singleton()->getClientNameResource()->equals($requiredName))) {
-                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}");
+                
+                if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
+                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
+                    continue;
+                } elseif ($clientNameResource === null) {
+                    \common_Logger::i("Client rejected. Unknown client.");
                     continue;
                 }
 
                 $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
                 if (-1 !== version_compare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
                     $result = true;
+                    break;
                 }
             }
         }
