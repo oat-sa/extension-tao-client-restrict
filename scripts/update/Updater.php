@@ -21,6 +21,7 @@
 namespace oat\taoClientRestrict\scripts\update;
 
 use \common_ext_ExtensionUpdater;
+use oat\tao\scripts\update\OntologyUpdater;
 
 /**
  * 
@@ -34,6 +35,12 @@ class Updater extends common_ext_ExtensionUpdater {
      */
     public function update($initialVersion) {
         $this->skip('1.0.0', '1.0.6');
+
+        if ($this->isVersion('1.0.6')) {
+            OntologyUpdater::syncModels();
+            $this->setVersion('1.0.7');
+        }
+
     }
 
 }
