@@ -20,8 +20,9 @@
 namespace oat\taoClientRestrict\model\requirements;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\generis\model\OntologyAwareTrait;
+use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
+use oat\taoClientDiagnostic\model\browserDetector\OSService;
 
 class RequirementsService extends ConfigurableService implements RequirementsServiceInterface
 {
