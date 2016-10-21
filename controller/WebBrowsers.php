@@ -20,7 +20,7 @@
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientRestrict\model\requirements\WebBrowserService;
+use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
 
 /**
  *
