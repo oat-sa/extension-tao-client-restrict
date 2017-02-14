@@ -92,7 +92,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
                 }
 
                 $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
-                if (-1 !== version_compare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
+                if (-1 !== $this->versionCompare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
                     $result = true;
                     break;
                 }
@@ -100,6 +100,27 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         }
 
         return $result;
+    }
+
+    /**
+     * Standard version_compare threats tat  5.2 < 5.2.0, 5.2 < 5.2.1, ...
+     *
+     * Fixed implementation taken from here:
+     * http://stackoverflow.com/questions/10997482/php-version-compare-returns-1-when-comparing-5-2-and-5-2-0
+     *
+     * @param $ver1
+     * @param $ver2
+     * @param null $operator
+     * @return mixed
+     */
+    protected function versionCompare($ver1, $ver2, $operator = null)
+    {
+        $p = '#(\.0+)+($|-)#';
+        $ver1 = preg_replace($p, '', $ver1);
+        $ver2 = preg_replace($p, '', $ver2);
+        return isset($operator) ?
+            version_compare($ver1, $ver2, $operator) :
+            version_compare($ver1, $ver2);
     }
 
 }
