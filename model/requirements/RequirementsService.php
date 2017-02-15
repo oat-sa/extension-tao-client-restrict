@@ -103,24 +103,23 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     }
 
     /**
-     * Standard version_compare threats tat  5.2 < 5.2.0, 5.2 < 5.2.1, ...
-     *
-     * Fixed implementation taken from here:
-     * http://stackoverflow.com/questions/10997482/php-version-compare-returns-1-when-comparing-5-2-and-5-2-0
+     * Standard version_compare threats that  5.2 < 5.2.0, 5.2 < 5.2.1, ...
      *
      * @param $ver1
      * @param $ver2
-     * @param null $operator
+     * @param null|string @see http://php.net/manual/en/function.version-compare.php
      * @return mixed
      */
     protected function versionCompare($ver1, $ver2, $operator = null)
     {
-        $p = '#(\.0+)+($|-)#';
-        $ver1 = preg_replace($p, '', $ver1);
-        $ver2 = preg_replace($p, '', $ver2);
-        return isset($operator) ?
-            version_compare($ver1, $ver2, $operator) :
-            version_compare($ver1, $ver2);
+        $ver1 = preg_replace('#(\.0+)+($|-)#', '', $ver1);
+        $ver2 = preg_replace('#(\.0+)+($|-)#', '', $ver2);
+        if ($operator === null) {
+            $result = version_compare($ver1, $ver2);
+        } else {
+            $result = version_compare($ver1, $ver2, $operator);
+        }
+        return $result;
     }
 
 }
