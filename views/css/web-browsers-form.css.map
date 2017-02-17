@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACE,qFAA2B,CACzB,KAAK,CAAE,GAAG,CAEZ,sDAAyB,CACvB,KAAK,CAAE,KAAK,CACZ,WAAW,CAAE,IAAI",
+"sources": ["../scss/web-browsers-form.scss"],
+"names": [],
+"file": "web-browsers-form.css"
+}
