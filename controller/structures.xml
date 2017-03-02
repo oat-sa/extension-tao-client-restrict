@@ -38,6 +38,12 @@
                             group="tree" binding="instanciate">
                         <icon id="icon-add"/>
                     </action>
+                    <action id="web-browser-import" name="Import" url="/taoClientRestrict/WebBrowserImport/index" context="resource" group="tree" binding="loadClass">
+                        <icon id="icon-import"/>
+                    </action>
+                    <action id="web-browser-export" name="Export" url="/taoClientRestrict/Export/index" context="resource" group="tree">
+                        <icon id="icon-export"/>
+                    </action>
                 </actions>
             </section>
             <section id="manage_os" name="OS Lists" url="/taoClientRestrict/OS/index">
@@ -71,6 +77,12 @@
                     <action id="os-new" name="Add" url="/taoClientRestrict/OS/addInstance" context="resource" group="tree"
                             binding="instanciate">
                         <icon id="icon-add"/>
+                    </action>
+                    <action id="os-import" name="Import" url="/taoClientRestrict/OSImport/index" context="resource" group="tree" binding="loadClass">
+                        <icon id="icon-import"/>
+                    </action>
+                    <action id="os-export" name="Export" url="/taoClientRestrict/Export/index" context="resource" group="tree">
+                        <icon id="icon-export"/>
                     </action>
                 </actions>
             </section>
