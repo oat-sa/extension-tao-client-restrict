@@ -14,34 +14,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
- *
+ * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
  *
  */
-namespace oat\taoClientRestrict\scripts\update;
 
-use \common_ext_ExtensionUpdater;
-use oat\tao\scripts\update\OntologyUpdater;
+namespace oat\taoClientRestrict\model\import;
 
-/**
- * 
- * @author Joel Bout <joel@taotesting.com>
- */
-class Updater extends common_ext_ExtensionUpdater {
+use oat\taoClientDiagnostic\model\browserDetector\OSService;
+
+class OsRdfImporter extends AbstractRdfImporter {
+
 
     /**
-     * (non-PHPdoc)
-     * @see common_ext_ExtensionUpdater::update()
+     * @see AbstractRdfImporter::getMandatoryProperties()
      */
-    public function update($initialVersion) {
-        $this->skip('1.0.0', '1.0.6');
-
-        if ($this->isVersion('1.0.6')) {
-            OntologyUpdater::syncModels();
-            $this->setVersion('1.0.7');
-        }
-
-        $this->skip('1.0.7', '1.3.0');
+    protected function getMandatoryProperties()
+    {
+        return [
+            OSService::PROPERTY_NAME,
+            OSService::PROPERTY_VERSION,
+        ];
     }
+
+    /**
+     * @see AbstractRdfImporter::getErrorMessage()
+     */
+    protected function getErrorMessage()
+    {
+        return __('You should only import OS List data');
+    }
+
 
 }
