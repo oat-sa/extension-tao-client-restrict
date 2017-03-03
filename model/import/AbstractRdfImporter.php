@@ -27,14 +27,15 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
     /**
      * Imports the rdf file into the selected class
      *
-     * @param string $file
+     * @param string $content
      * @param \core_kernel_classes_Class $class
      * @return \common_report_Report
      */
-    protected function flatImport($file, \core_kernel_classes_Class $class) {
+    protected function flatImport($content, \core_kernel_classes_Class $class)
+    {
         $report = \common_report_Report::createSuccess(__('Data imported successfully'));
         $graph = new \EasyRdf_Graph();
-        $graph->parseFile($file);
+        $graph->parse($content);
 
         $correctClass = true;
         foreach ($this->getMandatoryProperties() as $mandatoryProperty){
