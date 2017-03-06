@@ -78,7 +78,7 @@
                             binding="instanciate">
                         <icon id="icon-add"/>
                     </action>
-                    <action id="os-import" name="Import" url="/taoClientRestrict/OSImport/index" context="resource" group="tree" binding="loadClass">
+                    <action id="os-import" name="Import" url="/taoClientRestrict/OsImport/index" context="resource" group="tree" binding="loadClass">
                         <icon id="icon-import"/>
                     </action>
                     <action id="os-export" name="Export" url="/taoClientRestrict/Export/index" context="resource" group="tree">
