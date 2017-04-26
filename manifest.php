@@ -27,10 +27,10 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '1.3.1',
+    'version' => '2.0.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
-        'tao' => '>=7.74.0',
+        'tao' => '>=9.0.0',
         'taoDelivery' => '>=3.7.0',
         'taoClientDiagnostic' => '>=1.9.0',
         'taoBackOffice' => '>=0.8'
@@ -62,9 +62,6 @@ return array(
         
             #BASE URL (usually the domain root)
             'BASE_URL' => ROOT_URL.'taoClientRestrict/',
-        
-            #BASE WWW required by JS
-            'BASE_WWW' => ROOT_URL.'taoClientRestrict/views/'
     ),
     'extra' => array(
         'structures' => __DIR__.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.'structures.xml',
