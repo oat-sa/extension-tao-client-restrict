@@ -23,6 +23,7 @@ use oat\taoClientRestrict\controller\Error;
 use oat\taoClientRestrict\scripts\update\Updater;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\taoClientRestrict\controller\WebBrowsers;
+use oat\taoClientRestrict\install\RegisterClientDiagTester;
 
 return array(
     'name' => 'taoClientRestrict',
@@ -50,7 +51,8 @@ return array(
             __DIR__ . '/install/ontology/taodelivery.rdf',
         ),
         'php' => array(
-            RegisterAuthProvider::class
+            RegisterAuthProvider::class,
+            RegisterClientDiagTester::class,
         )
     ),
     'uninstall' => array(
