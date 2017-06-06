@@ -22,9 +22,9 @@ define([
     'jquery',
     'i18n',
     'util/url',
-    'taoClientDiagnostic/tools/getconfig',
-    'taoClientDiagnostic/tools/diagnostic/status'
-], function ($, __, url, getConfig, statusFactory) {
+    'taoClientDiagnostic/tools/getconfig'
+
+], function ($, __, url, getConfig) {
     'use strict';
 
     /**
@@ -66,7 +66,12 @@ define([
                         var percentage = data.success ? 100 : 0;
                         var status = {
                             percentage: percentage,
-                            quality: {}
+                            quality: {},
+                            feedback: {
+                                message: data.success ? __('Compatible') : __('Not Compatible'),
+                                threshold: 100,
+                                type: data.success ? 'success' : 'error',
+                            }
                         };
                         var summary = {
                             browser: {
