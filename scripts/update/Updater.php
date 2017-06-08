@@ -26,6 +26,7 @@ use oat\tao\model\accessControl\func\AccessRule;
 use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoClientDiagnostic\model\ClientDiagnosticRoles;
 use oat\taoClientRestrict\controller\WebBrowsers;
+use oat\taoClientRestrict\controller\OS;
 
 /**
  * 
@@ -58,6 +59,21 @@ class Updater extends common_ext_ExtensionUpdater {
             AclProxy::applyRule(new AccessRule(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', WebBrowsers::class));
 
             $this->setVersion('2.1.0');
+        }
+
+        if ($this->isVersion('2.1.0')) {
+            $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoClientDiagnostic');
+            $config = $extension->getConfig('clientDiag');
+
+            $config['testers']['osVersion'] = [
+                'tester' => 'taoClientRestrict/diagnosticTools/os/tester',
+            ];
+
+            $extension->setConfig('clientDiag', $config);
+
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', OS::class));
+
+            $this->setVersion('2.2.0');
         }
 
     }
