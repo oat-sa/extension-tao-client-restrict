@@ -21,6 +21,7 @@
 namespace oat\taoClientRestrict\controller;
 
 use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
+use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
  *
@@ -72,5 +73,17 @@ class WebBrowsers extends \tao_actions_SaSModule
         $this->setData('formTitle', __('Edit Authorized Web Browser'));
         $this->setData('myForm', $myForm->render());
         $this->setView('WebBrowsers/form.tpl');
+    }
+
+    /**
+     *
+     */
+    public function diagnose()
+    {
+        /** @var RequirementsServiceInterface $requirementsService */
+        $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+        $this->returnJson([
+            'success' => $requirementsService->browserComplies()
+        ]);
     }
 }

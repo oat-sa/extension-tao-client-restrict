@@ -21,13 +21,16 @@
 use oat\taoClientRestrict\install\RegisterAuthProvider;
 use oat\taoClientRestrict\controller\Error;
 use oat\taoClientRestrict\scripts\update\Updater;
+use oat\tao\model\accessControl\func\AccessRule;
+use oat\taoClientRestrict\controller\WebBrowsers;
+use oat\taoClientRestrict\install\RegisterClientDiagTester;
 
 return array(
     'name' => 'taoClientRestrict',
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '2.0.0',
+    'version' => '2.2.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'tao' => '>=9.0.0',
@@ -39,6 +42,7 @@ return array(
     'acl' => array(
         array('grant', 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager', array('ext'=>'taoClientRestrict')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('controller'=>Error::class)),
+        array(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', WebBrowsers::class),
     ),
     'install' => array(
         'rdf' => array(
@@ -47,7 +51,8 @@ return array(
             __DIR__ . '/install/ontology/taodelivery.rdf',
         ),
         'php' => array(
-            RegisterAuthProvider::class
+            RegisterAuthProvider::class,
+            RegisterClientDiagTester::class,
         )
     ),
     'uninstall' => array(
