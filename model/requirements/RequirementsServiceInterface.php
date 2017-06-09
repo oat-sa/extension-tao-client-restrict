@@ -19,8 +19,6 @@
  */
 namespace oat\taoClientRestrict\model\requirements;
 
-use oat\taoDelivery\model\execution\DeliveryExecution;
-
 /**
  * Manage delivery client restrictions
  *
@@ -36,5 +34,17 @@ interface RequirementsServiceInterface
      * @return bool
      */
     public function compliesToDelivery($deliveryId);
+
+    /**
+     * @param \core_kernel_classes_Resource $delivery
+     * @return boolean
+     */
+    public function browserComplies(\core_kernel_classes_Resource $delivery = null);
+
+    /**
+     * @param \core_kernel_classes_Resource $delivery
+     * @return boolean
+     */
+    public function osComplies(\core_kernel_classes_Resource $delivery = null);
 
 }

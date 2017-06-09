@@ -21,7 +21,7 @@
 namespace oat\taoClientRestrict\controller;
 
 use oat\taoClientDiagnostic\model\browserDetector\OSService;
-
+use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
  *
@@ -74,4 +74,17 @@ class OS extends \tao_actions_SaSModule
         $this->setData('myForm', $myForm->render());
         $this->setView('OS/form.tpl');
     }
+
+    /**
+     *
+     */
+    public function diagnose()
+    {
+        /** @var RequirementsServiceInterface $requirementsService */
+        $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+        $this->returnJson([
+            'success' => $requirementsService->osComplies()
+        ]);
+    }
+
 }
