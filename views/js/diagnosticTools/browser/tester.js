@@ -23,9 +23,9 @@ define([
     'lodash',
     'i18n',
     'util/url',
-    'taoClientDiagnostic/tools/getconfig'
-
-], function ($, _, __, url, getConfig) {
+    'taoClientDiagnostic/tools/getconfig',
+    'taoClientDiagnostic/tools/getPlatformInfo'
+], function ($, _, __, url, getConfig, getPlatformInfo) {
     'use strict';
 
     /**
@@ -71,49 +71,54 @@ define([
                 var testerUrl = url.route(initConfig.browserVersionAction, initConfig.browserVersionController, initConfig.browserVersionExtension);
 
                 diagnosticTool.changeStatus(__('Checking the browser version...'));
-                $.ajax({
-                    url : testerUrl,
-                    success : function(data) {
-                        var percentage = data.success ? 100 : 0;
-                        var status = {
-                            percentage: percentage,
-                            quality: {},
-                            feedback: {
-                                message: data.success ? __('Compatible') : __('Not Compatible'),
-                                threshold: 100,
-                                type: data.success ? 'success' : 'error'
-                            }
-                        };
-                        var summary = {
-                            browser: {
-                                message: __('Web browser version'),
-                                value: data.success ? __('Compatible') : __('Not Compatible')
-                            }
-                        };
-                        var customMsg = diagnosticTool.getCustomMsg('diagBrowserCheckResult') || '';
-                        var approvedBrowsers = [];
 
-                        if (_.isObject(data.approvedBrowsers)) {
-                            _.forOwn(data.approvedBrowsers, function(versions, browserName) {
-                                if (_.isArray(versions) && versions.length > 0) {
-                                    browserName += ' (' + versions.join(', ') + ')';
+                getPlatformInfo(window)
+                    .then(function(platformInfo) {
+                        $.ajax({
+                            url: testerUrl,
+                            success: function (data) {
+                                var percentage = data.success ? 100 : 0;
+                                var status = {
+                                    percentage: percentage,
+                                    quality: {},
+                                    feedback: {
+                                        message: data.success ? __('Compatible') : __('Not Compatible'),
+                                        threshold: 100,
+                                        type: data.success ? 'success' : 'error'
+                                    }
+                                };
+                                var summary = {
+                                    browser: {
+                                        message: __('Web browser version'),
+                                        value: data.success ? __('Compatible') : __('Not Compatible')
+                                    }
+                                };
+                                var currentBrowser = platformInfo.browser + ' ' + platformInfo.browserVersion;
+                                var customMsg = diagnosticTool.getCustomMsg('diagBrowserCheckResult') || '';
+                                var approvedBrowsers = [];
+
+                                if (_.isObject(data.approvedBrowsers)) {
+                                    _.forOwn(data.approvedBrowsers, function (versions, browserName) {
+                                        if (_.isArray(versions) && versions.length > 0) {
+                                            browserName += ' (' + versions.join(', ') + ')';
+                                        }
+                                        approvedBrowsers.push(browserName);
+                                    });
                                 }
-                                approvedBrowsers.push(browserName);
-                            });
-                        }
 
-                        status.id = 'browser_version';
-                        status.title = __('Web browser version');
+                                status.id = 'browser_version';
+                                status.title = __('Web browser version');
 
-                        customMsg = customMsg
-                            // .replace(_placeHolders.CURRENT_BROWSER, currentBrowser)
-                            .replace(_placeHolders.APPROVED_BROWSERS, approvedBrowsers.join(', '));
-                        diagnosticTool.addCustomFeedbackMsg(status, customMsg);
+                                customMsg = customMsg
+                                    .replace(_placeHolders.CURRENT_BROWSER, currentBrowser)
+                                    .replace(_placeHolders.APPROVED_BROWSERS, approvedBrowsers.join(', '));
+                                diagnosticTool.addCustomFeedbackMsg(status, customMsg);
 
 
-                        done(status, summary, {compatible: data.success});
-                    }
-                });
+                                done(status, summary, {compatible: data.success});
+                            }
+                        });
+                    });
             }
         };
     }
