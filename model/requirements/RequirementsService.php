@@ -35,7 +35,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     const PROPERTY_DELIVERY_RESTRICT_OS_USAGE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictOSUsage';
 
     const URI_DELIVERY_COMPLY_ENABLED = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ComplyEnabled';
-    
+
     /**
      * Whether client complies to the delivery execution
      * @param string $deliveryId
@@ -58,11 +58,20 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             $isBrowserRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
             if (!is_null($isBrowserRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
-                $browsers = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER));
-                $isBrowserApproved = $this->complies($browsers->toArray(), WebBrowserService::class);
+                $browsers = $this->getApprovedBrowsers();
+                $isBrowserApproved = $this->complies($browsers, WebBrowserService::class);
             }
         }
         return $isBrowserApproved;
+    }
+
+    public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null) {
+        if ($delivery !== null) {
+            return $delivery
+                ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
+                ->toArray();
+        }
+        return [];
     }
 
     /**
@@ -101,7 +110,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
-                
+
                 if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
                     \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
                     continue;

@@ -43,6 +43,12 @@ interface RequirementsServiceInterface
 
     /**
      * @param \core_kernel_classes_Resource $delivery
+     * @return array
+     */
+    public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null);
+
+    /**
+     * @param \core_kernel_classes_Resource $delivery
      * @return boolean
      */
     public function osComplies(\core_kernel_classes_Resource $delivery = null);

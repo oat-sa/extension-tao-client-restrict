@@ -20,11 +20,12 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'util/url',
     'taoClientDiagnostic/tools/getconfig'
 
-], function ($, __, url, getConfig) {
+], function ($, _, __, url, getConfig) {
     'use strict';
 
     /**
@@ -35,7 +36,17 @@ define([
     var _defaults = {
         browserVersionAction: 'diagnose',
         browserVersionController: 'WebBrowsers',
-        browserVersionExtension: 'taoClientRestrict',
+        browserVersionExtension: 'taoClientRestrict'
+    };
+
+    /**
+     * Placeholder variables for custom messages
+     * @type {Object}
+     * @private
+     */
+    var _placeHolders = {
+        CURRENT_BROWSER: '%CURRENT_BROWSER%',
+        APPROVED_BROWSERS: '%APPROVED_BROWSERS%'
     };
 
 
@@ -70,7 +81,7 @@ define([
                             feedback: {
                                 message: data.success ? __('Compatible') : __('Not Compatible'),
                                 threshold: 100,
-                                type: data.success ? 'success' : 'error',
+                                type: data.success ? 'success' : 'error'
                             }
                         };
                         var summary = {
@@ -79,9 +90,26 @@ define([
                                 value: data.success ? __('Compatible') : __('Not Compatible')
                             }
                         };
+                        var customMsg = diagnosticTool.getCustomMsg('diagBrowserCheckResult') || '';
+                        var approvedBrowsers = [];
+
+                        if (_.isObject(data.approvedBrowsers)) {
+                            _.forOwn(data.approvedBrowsers, function(versions, browserName) {
+                                if (_.isArray(versions) && versions.length > 0) {
+                                    browserName += ' (' + versions.join(', ') + ')';
+                                }
+                                approvedBrowsers.push(browserName);
+                            });
+                        }
 
                         status.id = 'browser_version';
                         status.title = __('Web browser version');
+
+                        customMsg = customMsg
+                            // .replace(_placeHolders.CURRENT_BROWSER, currentBrowser)
+                            .replace(_placeHolders.APPROVED_BROWSERS, approvedBrowsers.join(', '));
+                        diagnosticTool.addCustomFeedbackMsg(status, customMsg);
+
 
                         done(status, summary, {compatible: data.success});
                     }

@@ -35,7 +35,7 @@ define([
     var _defaults = {
         osVersionAction: 'diagnose',
         osVersionController: 'OS',
-        osVersionExtension: 'taoClientRestrict',
+        osVersionExtension: 'taoClientRestrict'
     };
 
 
@@ -70,7 +70,7 @@ define([
                             feedback: {
                                 message: data.success ? __('Compatible') : __('Not Compatible'),
                                 threshold: 100,
-                                type: data.success ? 'success' : 'error',
+                                type: data.success ? 'success' : 'error'
                             }
                         };
                         var summary = {
