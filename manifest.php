@@ -18,6 +18,7 @@
  *
  *
  */
+use oat\taoClientRestrict\controller\OS;
 use oat\taoClientRestrict\install\RegisterAuthProvider;
 use oat\taoClientRestrict\controller\Error;
 use oat\taoClientRestrict\scripts\update\Updater;
@@ -43,6 +44,7 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager', array('ext'=>'taoClientRestrict')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('controller'=>Error::class)),
         array(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', WebBrowsers::class),
+        array(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', OS::class),
     ),
     'install' => array(
         'rdf' => array(
