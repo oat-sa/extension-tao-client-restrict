@@ -107,8 +107,8 @@ define([
                                     });
                                 }
 
-                                status.id = 'browser_version';
-                                status.title = __('Web browser version');
+                                status.id = 'os_version';
+                                status.title = __('Operating system version');
 
                                 customMsg = customMsg
                                     .replace(_placeHolders.CURRENT_OS, currentOs)
