@@ -88,8 +88,8 @@ class OS extends \tao_actions_SaSModule
 
         if (! empty($approvedOs)) {
             forEach($approvedOs as $os) {
-                $osName = $os->getOnePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_NAME));
-                $osVersion = $os->getOnePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_VERSION));
+                $osName = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_NAME));
+                $osVersion = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_VERSION));
                 $approvedOsFormatted[$osName->getLabel()][] = $osVersion->__toString();
             }
         }

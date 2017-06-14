@@ -88,8 +88,8 @@ class WebBrowsers extends \tao_actions_SaSModule
 
         if (! empty($approvedBrowsers)) {
             forEach($approvedBrowsers as $browser) {
-                $browserName = $browser->getOnePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_NAME));
-                $browserVersion = $browser->getOnePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_VERSION));
+                $browserName = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_NAME));
+                $browserVersion = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_VERSION));
                 $approvedBrowsersFormatted[$browserName->getLabel()][] = $browserVersion->__toString();
             }
         }
