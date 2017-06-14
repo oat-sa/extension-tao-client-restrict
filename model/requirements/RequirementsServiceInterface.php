@@ -53,4 +53,10 @@ interface RequirementsServiceInterface
      */
     public function osComplies(\core_kernel_classes_Resource $delivery = null);
 
+    /**
+     * @param \core_kernel_classes_Resource $delivery
+     * @return array
+     */
+    public function getApprovedOs(\core_kernel_classes_Resource $delivery = null);
+
 }

@@ -114,7 +114,6 @@ define([
                                     .replace(_placeHolders.APPROVED_BROWSERS, approvedBrowsers.join(', '));
                                 diagnosticTool.addCustomFeedbackMsg(status, customMsg);
 
-
                                 done(status, summary, {compatible: data.success});
                             }
                         });

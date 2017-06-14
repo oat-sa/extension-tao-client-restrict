@@ -85,11 +85,20 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             $isOSRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
             if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
-                $OS = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS));
-                $isOSApproved = $this->complies($OS->toArray(), OSService::class);
+                $approvedOs = $this->getApprovedOs($delivery);
+                $isOSApproved = $this->complies($approvedOs, OSService::class);
             }
         }
         return $isOSApproved;
+    }
+
+    public function getApprovedOs(\core_kernel_classes_Resource $delivery = null) {
+        if ($delivery !== null) {
+            return $delivery
+                ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS))
+                ->toArray();
+        }
+        return [];
     }
 
     /**
