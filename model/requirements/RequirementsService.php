@@ -36,6 +36,9 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
 
     const URI_DELIVERY_COMPLY_ENABLED = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ComplyEnabled';
 
+    private $approvedOs = [];
+    private $approvedBrowsers = [];
+
     /**
      * Whether client complies to the delivery execution
      * @param string $deliveryId
@@ -66,12 +69,12 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     }
 
     public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null) {
-        if ($delivery !== null) {
-            return $delivery
+        if ($delivery !== null && empty($this->approvedBrowsers)) {
+            $this->approvedBrowsers = $delivery
                 ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
                 ->toArray();
         }
-        return [];
+        return $this->approvedBrowsers;
     }
 
     /**
@@ -93,12 +96,12 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     }
 
     public function getApprovedOs(\core_kernel_classes_Resource $delivery = null) {
-        if ($delivery !== null) {
-            return $delivery
+        if ($delivery !== null && empty($this->approvedOs)) {
+            $this->approvedOs = $delivery
                 ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS))
                 ->toArray();
         }
-        return [];
+        return $this->approvedOs;
     }
 
     /**
