@@ -35,7 +35,10 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     const PROPERTY_DELIVERY_RESTRICT_OS_USAGE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictOSUsage';
 
     const URI_DELIVERY_COMPLY_ENABLED = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#ComplyEnabled';
-    
+
+    private $approvedOs = [];
+    private $approvedBrowsers = [];
+
     /**
      * Whether client complies to the delivery execution
      * @param string $deliveryId
@@ -58,11 +61,24 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             $isBrowserRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
             if (!is_null($isBrowserRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
-                $browsers = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER));
-                $isBrowserApproved = $this->complies($browsers->toArray(), WebBrowserService::class);
+                $browsers = $this->getApprovedBrowsers();
+                $isBrowserApproved = $this->complies($browsers, WebBrowserService::class);
             }
         }
         return $isBrowserApproved;
+    }
+
+    public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null) {
+        if ($delivery !== null) {
+            $deliveryUri = $delivery->getUri();
+            if (empty($this->approvedBrowsers[$deliveryUri])) {
+                $this->approvedBrowsers[$deliveryUri] = $delivery
+                    ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
+                    ->toArray();
+            }
+            return $this->approvedBrowsers[$deliveryUri];
+        }
+        return [];
     }
 
     /**
@@ -76,11 +92,24 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             $isOSRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
             if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
-                $OS = $delivery->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS));
-                $isOSApproved = $this->complies($OS->toArray(), OSService::class);
+                $approvedOs = $this->getApprovedOs($delivery);
+                $isOSApproved = $this->complies($approvedOs, OSService::class);
             }
         }
         return $isOSApproved;
+    }
+
+    public function getApprovedOs(\core_kernel_classes_Resource $delivery = null) {
+        if ($delivery !== null) {
+            $deliveryUri = $delivery->getUri();
+            if (empty($this->approvedOs[$deliveryUri])) {
+                $this->approvedOs[$deliveryUri] = $delivery
+                    ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS))
+                    ->toArray();
+            }
+            return $this->approvedOs[$deliveryUri];
+        }
+        return [];
     }
 
     /**
@@ -101,7 +130,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
                 $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
-                
+
                 if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
                     \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
                     continue;

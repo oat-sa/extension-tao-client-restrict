@@ -38,6 +38,9 @@ class RegisterClientDiagTester extends \common_ext_action_InstallAction
         $config['testers']['browserVersion'] = [
             'tester' => 'taoClientRestrict/diagnosticTools/browser/tester',
         ];
+        $config['testers']['osVersion'] = [
+            'tester' => 'taoClientRestrict/diagnosticTools/os/tester',
+        ];
 
         $extension->setConfig('clientDiag', $config);
 

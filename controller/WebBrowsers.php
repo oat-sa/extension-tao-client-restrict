@@ -82,8 +82,20 @@ class WebBrowsers extends \tao_actions_SaSModule
     {
         /** @var RequirementsServiceInterface $requirementsService */
         $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+
+        $approvedBrowsers = $requirementsService->getApprovedBrowsers();
+        $approvedBrowsersFormatted = [];
+
+        if (! empty($approvedBrowsers)) {
+            forEach($approvedBrowsers as $browser) {
+                $browserName = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_NAME));
+                $browserVersion = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_VERSION));
+                $approvedBrowsersFormatted[$browserName->getLabel()][] = $browserVersion->__toString();
+            }
+        }
         $this->returnJson([
-            'success' => $requirementsService->browserComplies()
+            'success' => $requirementsService->browserComplies(),
+            'approvedBrowsers' => $approvedBrowsersFormatted
         ]);
     }
 }

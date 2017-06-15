@@ -29,7 +29,7 @@ use oat\taoClientRestrict\controller\WebBrowsers;
 use oat\taoClientRestrict\controller\OS;
 
 /**
- * 
+ *
  * @author Joel Bout <joel@taotesting.com>
  */
 class Updater extends common_ext_ExtensionUpdater {
@@ -76,6 +76,7 @@ class Updater extends common_ext_ExtensionUpdater {
             $this->setVersion('2.2.0');
         }
 
+        $this->skip('2.2.0', '3.0.0');
     }
 
 }
