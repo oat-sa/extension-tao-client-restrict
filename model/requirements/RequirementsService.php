@@ -70,12 +70,13 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
 
     public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null) {
         if ($delivery !== null) {
-            if (empty($this->approvedBrowsers[$delivery->getUri()])) {
-                $this->approvedBrowsers[$delivery->getUri()] = $delivery
+            $deliveryUri = $delivery->getUri();
+            if (empty($this->approvedBrowsers[$deliveryUri])) {
+                $this->approvedBrowsers[$deliveryUri] = $delivery
                     ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
                     ->toArray();
             }
-            return $this->approvedBrowsers[$delivery->getUri()];
+            return $this->approvedBrowsers[$deliveryUri];
         }
         return [];
     }
@@ -100,12 +101,13 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
 
     public function getApprovedOs(\core_kernel_classes_Resource $delivery = null) {
         if ($delivery !== null) {
-            if (empty($this->approvedOs[$delivery->getUri()])) {
-                $this->approvedOs[$delivery->getUri()] = $delivery
+            $deliveryUri = $delivery->getUri();
+            if (empty($this->approvedOs[$deliveryUri])) {
+                $this->approvedOs[$deliveryUri] = $delivery
                     ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS))
                     ->toArray();
             }
-            return $this->approvedOs[$delivery->getUri()];
+            return $this->approvedOs[$deliveryUri];
         }
         return [];
     }
