@@ -97,7 +97,6 @@ define([
                                 var currentOs = platformInfo.os + ' ' + platformInfo.osVersion;
                                 var customMsg = diagnosticTool.getCustomMsg('diagOsCheckResult') || '';
 
-                                console.log('customMsg = ', customMsg);
                                 var approvedOs = [];
 
                                 if (_.isObject(data.approvedOs)) {
