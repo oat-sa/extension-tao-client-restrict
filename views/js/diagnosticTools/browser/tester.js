@@ -82,7 +82,7 @@ define([
                                     percentage: percentage,
                                     quality: {},
                                     feedback: {
-                                        message: data.success ? __('Compatible') : __('Not Compatible'),
+                                        message: data.success ? __('Pass – Your browser is approved') : __('Issue'),
                                         threshold: 100,
                                         type: data.success ? 'success' : 'error'
                                     }

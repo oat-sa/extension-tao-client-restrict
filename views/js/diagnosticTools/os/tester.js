@@ -83,7 +83,7 @@ define([
                                     percentage: percentage,
                                     quality: {},
                                     feedback: {
-                                        message: data.success ? __('Compatible') : __('Not Compatible'),
+                                        message: data.success ? __('Pass – Your Operating System is approved') : __('Issue'),
                                         threshold: 100,
                                         type: data.success ? 'success' : 'error'
                                     }
@@ -96,6 +96,8 @@ define([
                                 };
                                 var currentOs = platformInfo.os + ' ' + platformInfo.osVersion;
                                 var customMsg = diagnosticTool.getCustomMsg('diagOsCheckResult') || '';
+
+                                console.log('customMsg = ', customMsg);
                                 var approvedOs = [];
 
                                 if (_.isObject(data.approvedOs)) {
