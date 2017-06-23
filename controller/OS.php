@@ -82,8 +82,21 @@ class OS extends \tao_actions_SaSModule
     {
         /** @var RequirementsServiceInterface $requirementsService */
         $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+
+        $approvedOs = $requirementsService->getApprovedOs();
+        $approvedOsFormatted = [];
+
+        if (! empty($approvedOs)) {
+            forEach($approvedOs as $os) {
+                $osName = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_NAME));
+                $osVersion = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_VERSION));
+                $approvedOsFormatted[$osName->getLabel()][] = $osVersion->__toString();
+            }
+        }
+
         $this->returnJson([
-            'success' => $requirementsService->osComplies()
+            'success' => $requirementsService->osComplies(),
+            'approvedOs' => $approvedOsFormatted
         ]);
     }
 

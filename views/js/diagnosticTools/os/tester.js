@@ -20,11 +20,13 @@
  */
 define([
     'jquery',
+    'lodash',
     'i18n',
     'util/url',
-    'taoClientDiagnostic/tools/getconfig'
+    'taoClientDiagnostic/tools/getconfig',
+    'taoClientDiagnostic/tools/getPlatformInfo'
 
-], function ($, __, url, getConfig) {
+], function ($, _, __, url, getConfig, getPlatformInfo) {
     'use strict';
 
     /**
@@ -35,7 +37,17 @@ define([
     var _defaults = {
         osVersionAction: 'diagnose',
         osVersionController: 'OS',
-        osVersionExtension: 'taoClientRestrict',
+        osVersionExtension: 'taoClientRestrict'
+    };
+
+    /**
+     * Placeholder variables for custom messages
+     * @type {Object}
+     * @private
+     */
+    var _placeHolders = {
+        CURRENT_OS: '%CURRENT_OS%',
+        APPROVED_OS: '%APPROVED_OS%'
     };
 
 
@@ -60,32 +72,54 @@ define([
                 var testerUrl = url.route(initConfig.osVersionAction, initConfig.osVersionController, initConfig.osVersionExtension);
 
                 diagnosticTool.changeStatus(__('Checking the os version...'));
-                $.ajax({
-                    url : testerUrl,
-                    success : function(data) {
-                        var percentage = data.success ? 100 : 0;
-                        var status = {
-                            percentage: percentage,
-                            quality: {},
-                            feedback: {
-                                message: data.success ? __('Compatible') : __('Not Compatible'),
-                                threshold: 100,
-                                type: data.success ? 'success' : 'error',
-                            }
-                        };
-                        var summary = {
-                            os: {
-                                message: __('Operating system version'),
-                                value: data.success ? __('Compatible') : __('Not Compatible')
-                            }
-                        };
 
-                        status.id = 'os_version';
-                        status.title = __('Operating system version');
+                getPlatformInfo(window)
+                    .then(function(platformInfo) {
+                        $.ajax({
+                            url : testerUrl,
+                            success : function(data) {
+                                var percentage = data.success ? 100 : 0;
+                                var status = {
+                                    percentage: percentage,
+                                    quality: {},
+                                    feedback: {
+                                        message: data.success ? __('Pass – Your Operating System is approved') : __('Issue'),
+                                        threshold: 100,
+                                        type: data.success ? 'success' : 'error'
+                                    }
+                                };
+                                var summary = {
+                                    os: {
+                                        message: __('Operating system version'),
+                                        value: data.success ? __('Compatible') : __('Not Compatible')
+                                    }
+                                };
+                                var currentOs = platformInfo.os + ' ' + platformInfo.osVersion;
+                                var customMsg = diagnosticTool.getCustomMsg('diagOsCheckResult') || '';
 
-                        done(status, summary, {compatible: data.success});
-                    }
-                });
+                                var approvedOs = [];
+
+                                if (_.isObject(data.approvedOs)) {
+                                    _.forOwn(data.approvedOs, function (versions, osName) {
+                                        if (_.isArray(versions) && versions.length > 0) {
+                                            osName += ' (' + versions.join(', ') + ')';
+                                        }
+                                        approvedOs.push(osName);
+                                    });
+                                }
+
+                                status.id = 'os_version';
+                                status.title = __('Operating system version');
+
+                                customMsg = customMsg
+                                    .replace(_placeHolders.CURRENT_OS, currentOs)
+                                    .replace(_placeHolders.APPROVED_OS, approvedOs.join(', '));
+                                diagnosticTool.addCustomFeedbackMsg(status, customMsg);
+
+                                done(status, summary, {compatible: data.success});
+                            }
+                        });
+                    });
             }
         };
     }
