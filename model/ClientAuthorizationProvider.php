@@ -22,12 +22,10 @@ namespace oat\taoClientRestrict\model;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\taoDelivery\model\authorization\AuthorizationProvider;
-use oat\oatbox\service\ServiceManager;
 use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
-use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\oatbox\user\User;
-use oat\taoClientRestrict\model\requirements\RequirementsService;
 use oat\taoDelivery\model\authorization\UnAuthorizedException;
+use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 
 /**
  * Default authorization provider using the strainer strategy...
@@ -50,7 +48,7 @@ class ClientAuthorizationProvider extends ConfigurableService implements Authori
         $this->validateClient($deliveryId);
     }
     
-    public function verifyResumeAuthorization(DeliveryExecution $deliveryExecution, User $user)
+    public function verifyResumeAuthorization(DeliveryExecutionInterface $deliveryExecution, User $user)
     {
         $this->validateClient($deliveryExecution->getDelivery()->getUri());
     }
