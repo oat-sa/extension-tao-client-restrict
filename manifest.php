@@ -31,11 +31,11 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '3.0.1',
+    'version' => '3.1.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'tao' => '>=9.0.0',
-        'taoDelivery' => '>=3.7.0',
+        'taoDelivery' => '>=6.7.0',
         'taoClientDiagnostic' => '>=2.5.0',
         'taoBackOffice' => '>=0.8'
     ),
