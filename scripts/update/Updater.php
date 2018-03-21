@@ -76,9 +76,9 @@ class Updater extends common_ext_ExtensionUpdater {
             $this->setVersion('2.2.0');
         }
 
-        $this->skip('2.2.0', '3.2.1');
+        $this->skip('2.2.0', '3.2.2');
         
-        if ($this->isVersion('3.2.1')) {
+        if ($this->isVersion('3.2.2')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoClientDiagnostic');
             $config = $extension->getConfig('clientDiag');
 
@@ -100,6 +100,8 @@ class Updater extends common_ext_ExtensionUpdater {
 
             $this->setVersion('3.3.0');
         }
+
+        $this->skip('3.3.0', '3.3.1');
     }
 
 }
