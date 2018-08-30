@@ -27,6 +27,7 @@ use oat\tao\model\accessControl\func\AclProxy;
 use oat\taoClientDiagnostic\model\ClientDiagnosticRoles;
 use oat\taoClientRestrict\controller\WebBrowsers;
 use oat\taoClientRestrict\controller\OS;
+use oat\tao\model\user\TaoRoles;
 
 /**
  *
@@ -102,6 +103,16 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('3.3.0', '3.3.2');
+
+        if ($this->isVersion('3.3.2')) {
+            AclProxy::revokeRule(new AccessRule(AccessRule::GRANT, TaoRoles::BASE_USER, OS::class));
+            AclProxy::revokeRule(new AccessRule(AccessRule::GRANT, TaoRoles::BASE_USER, WebBrowsers::class));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::BASE_USER, OS::class . '@diagnose'));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::BASE_USER, WebBrowsers::class . '@diagnose'));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::TAO_MANAGER, OS::class));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::TAO_MANAGER, WebBrowsers::class));
+            $this->setVersion('3.3.3');
+        }
     }
 
 }
