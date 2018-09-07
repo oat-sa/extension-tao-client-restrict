@@ -25,13 +25,14 @@ use oat\taoClientRestrict\scripts\update\Updater;
 use oat\tao\model\accessControl\func\AccessRule;
 use oat\taoClientRestrict\controller\WebBrowsers;
 use oat\taoClientRestrict\install\RegisterClientDiagTester;
+use oat\tao\model\user\TaoRoles;
 
 return array(
     'name' => 'taoClientRestrict',
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '3.3.2',
+    'version' => '3.3.3',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'tao' => '>=14.3.1',
@@ -43,8 +44,10 @@ return array(
     'acl' => array(
         array('grant', 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager', array('ext'=>'taoClientRestrict')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('controller'=>Error::class)),
-        array(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', WebBrowsers::class),
-        array(AccessRule::GRANT, 'http://www.tao.lu/Ontologies/TAO.rdf#BaseUserRole', OS::class),
+        array(AccessRule::GRANT, TaoRoles::BASE_USER, WebBrowsers::class . '@diagnose'),
+        array(AccessRule::GRANT, TaoRoles::BASE_USER, OS::class . '@diagnose'),
+        array(AccessRule::GRANT, TaoRoles::TAO_MANAGER, WebBrowsers::class),
+        array(AccessRule::GRANT, TaoRoles::TAO_MANAGER, OS::class),
     ),
     'install' => array(
         'rdf' => array(
