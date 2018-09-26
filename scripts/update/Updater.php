@@ -113,6 +113,8 @@ class Updater extends common_ext_ExtensionUpdater {
             AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::TAO_MANAGER, WebBrowsers::class));
             $this->setVersion('3.3.3');
         }
+
+        $this->skip('3.3.3', '3.3.4');
     }
 
 }
