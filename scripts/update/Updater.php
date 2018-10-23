@@ -115,6 +115,12 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('3.3.3', '3.3.4');
+
+        if ($this->isVersion('3.3.4')) {
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::ANONYMOUS, OS::class . '@diagnose'));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::ANONYMOUS, WebBrowsers::class . '@diagnose'));
+            $this->setVersion('3.3.5');
+        }
     }
 
 }
