@@ -32,13 +32,13 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '3.3.4',
+    'version' => '4.0.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
-        'tao' => '>=14.3.1',
-        'taoDelivery' => '>=7.0.0',
-        'taoClientDiagnostic' => '>=2.5.0',
-        'taoBackOffice' => '>=0.8'
+        'tao'                 => '>=21.0.0',
+        'taoDelivery'         => '>=11.0.0',
+        'taoClientDiagnostic' => '>=3.0.0',
+        'taoBackOffice'       => '>=3.0.0'
     ),
     'managementRole' => 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager',
     'acl' => array(
