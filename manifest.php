@@ -32,7 +32,7 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '4.0.0',
+    'version' => '4.0.1',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'tao'                 => '>=21.0.0',
@@ -45,7 +45,9 @@ return array(
         array('grant', 'http://www.tao.lu/Ontologies/generis.rdf#taoClientRestrictManager', array('ext'=>'taoClientRestrict')),
         array('grant', 'http://www.tao.lu/Ontologies/TAO.rdf#DeliveryRole', array('controller'=>Error::class)),
         array(AccessRule::GRANT, TaoRoles::BASE_USER, WebBrowsers::class . '@diagnose'),
+        array(AccessRule::GRANT, TaoRoles::ANONYMOUS, WebBrowsers::class . '@diagnose'),
         array(AccessRule::GRANT, TaoRoles::BASE_USER, OS::class . '@diagnose'),
+        array(AccessRule::GRANT, TaoRoles::ANONYMOUS, OS::class . '@diagnose'),
         array(AccessRule::GRANT, TaoRoles::TAO_MANAGER, WebBrowsers::class),
         array(AccessRule::GRANT, TaoRoles::TAO_MANAGER, OS::class),
     ),
