@@ -78,7 +78,7 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('2.2.0', '3.2.2');
-        
+
         if ($this->isVersion('3.2.2')) {
             $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoClientDiagnostic');
             $config = $extension->getConfig('clientDiag');
@@ -89,7 +89,7 @@ class Updater extends common_ext_ExtensionUpdater {
                 'tester' => 'taoClientRestrict/diagnosticTools/browser/tester',
                 'customMsgKey' => 'diagBrowserCheckResult'
             ];
-            
+
             $config['testers']['osVersion'] = [
                 'enabled' => true,
                 'level' => 1,
@@ -114,7 +114,15 @@ class Updater extends common_ext_ExtensionUpdater {
             $this->setVersion('3.3.3');
         }
 
-        $this->skip('3.3.3', '3.3.4');
+
+        $this->skip('3.3.3', '4.0.0');
+
+        if ($this->isVersion('4.0.0')) {
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::ANONYMOUS, OS::class . '@diagnose'));
+            AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::ANONYMOUS, WebBrowsers::class . '@diagnose'));
+            $this->setVersion('4.0.1');
+        }
+      
     }
 
 }
