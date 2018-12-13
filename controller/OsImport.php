@@ -22,18 +22,18 @@ namespace oat\taoClientRestrict\controller;
 
 use oat\taoClientRestrict\model\import\OsRdfImporter;
 
-class OsImport extends \tao_actions_Import {
-
+class OsImport extends \tao_actions_Import
+{
 
     /**
      * Gets the available import handlers for this module
      * @return array
      */
-    protected function getAvailableImportHandlers() {
+    protected function getAvailableImportHandlers()
+    {
         return array(
             new OsRdfImporter(),
         );
     }
-
 
 }
