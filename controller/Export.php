@@ -25,6 +25,7 @@ namespace oat\taoClientRestrict\controller;
  * This controller provide the actions to export restrict lists
  *
  */
-class Export extends \tao_actions_Export {
+class Export extends \tao_actions_Export
+{
 
 }

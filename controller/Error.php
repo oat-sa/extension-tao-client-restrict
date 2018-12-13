@@ -36,17 +36,16 @@ class Error extends \tao_actions_SaSModule
      */
     public function notCompatibleEnvironment()
     {
-        $entryPoints = $this->getServiceManager()->get(EntryPointService::SERVICE_ID)->getEntryPoints();
+        $entryPoints = $this->getServiceLocator()->get(EntryPointService::SERVICE_ID)->getEntryPoints();
         $deliveryServerUrl = $entryPoints['deliveryServer']->getUrl();
 
         $this->setData('client_config_url', $this->getClientConfigUrl());
         $this->setData('returnUrl', $deliveryServerUrl);
         $this->setData('showControls', false);
-        $this->setData('userLabel', \common_session_SessionManager::getSession()->getUserLabel());
+        $this->setData('userLabel', $this->getSession()->getUserLabel());
         $this->setData('content-template', 'Error/notCompatibleEnvironment.tpl');
         $this->setData('content-extension', 'taoClientRestrict');
         $this->setView('DeliveryServer/layout.tpl', 'taoDelivery');
     }
-
 
 }

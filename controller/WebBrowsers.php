@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
  *
  */
 
@@ -30,18 +30,14 @@ use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
  */
 class WebBrowsers extends \tao_actions_SaSModule
 {
-
-    /**
-     * constructor: initialize the service and the default data
-     * @access public
-     */
-    public function __construct()
+    protected function getClassService()
     {
-        parent::__construct();
-
-        // the service is initialized by default
-        $this->service = WebBrowserService::singleton();
+        if (is_null($this->service)) {
+            $this->service = WebBrowserService::singleton();
+        }
+        return $this->service;
     }
+
 
     public function editInstance()
     {
@@ -81,15 +77,15 @@ class WebBrowsers extends \tao_actions_SaSModule
     public function diagnose()
     {
         /** @var RequirementsServiceInterface $requirementsService */
-        $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+        $requirementsService = $this->getServiceLocator()->get(RequirementsServiceInterface::CONFIG_ID);
 
         $approvedBrowsers = $requirementsService->getApprovedBrowsers();
         $approvedBrowsersFormatted = [];
 
         if (! empty($approvedBrowsers)) {
             forEach($approvedBrowsers as $browser) {
-                $browserName = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_NAME));
-                $browserVersion = $browser->getUniquePropertyValue(new \core_kernel_classes_Property(WebBrowserService::PROPERTY_VERSION));
+                $browserName = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_NAME));
+                $browserVersion = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_VERSION));
                 $approvedBrowsersFormatted[$browserName->getLabel()][] = $browserVersion->__toString();
             }
         }

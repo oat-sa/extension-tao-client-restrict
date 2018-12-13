@@ -23,23 +23,22 @@ namespace oat\taoClientRestrict\controller;
 use oat\taoClientRestrict\model\import\WebBrowserRdfImporter;
 
 /**
- * This controller provide the actions to import items 
- * 
+ * This controller provide the actions to import items
+ *
  * @author CRP Henri Tudor - TAO Team - {@link http://www.tao.lu}
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  * @package taoItems
- 
+
  *
  */
-class WebBrowserImport extends \tao_actions_Import {
+class WebBrowserImport extends \tao_actions_Import
+{
 
-
-
-    protected function getAvailableImportHandlers() {
+    protected function getAvailableImportHandlers()
+    {
         return array(
             new WebBrowserRdfImporter(),
         );
     }
-
 
 }
