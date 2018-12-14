@@ -122,7 +122,8 @@ class Updater extends common_ext_ExtensionUpdater {
             AclProxy::applyRule(new AccessRule(AccessRule::GRANT, TaoRoles::ANONYMOUS, WebBrowsers::class . '@diagnose'));
             $this->setVersion('4.0.1');
         }
-      
+
+        $this->skip('4.0.1', '4.1.0');
     }
 
 }

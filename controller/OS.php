@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
  *
  */
 
@@ -30,18 +30,6 @@ use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
  */
 class OS extends \tao_actions_SaSModule
 {
-
-    /**
-     * constructor: initialize the service and the default data
-     * @access public
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        // the service is initialized by default
-        $this->service = OSService::singleton();
-    }
 
     public function editInstance()
     {
@@ -81,15 +69,15 @@ class OS extends \tao_actions_SaSModule
     public function diagnose()
     {
         /** @var RequirementsServiceInterface $requirementsService */
-        $requirementsService = $this->getServiceManager()->get(RequirementsServiceInterface::CONFIG_ID);
+        $requirementsService = $this->getServiceLocator()->get(RequirementsServiceInterface::CONFIG_ID);
 
         $approvedOs = $requirementsService->getApprovedOs();
         $approvedOsFormatted = [];
 
         if (! empty($approvedOs)) {
             forEach($approvedOs as $os) {
-                $osName = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_NAME));
-                $osVersion = $os->getUniquePropertyValue(new \core_kernel_classes_Property(OSService::PROPERTY_VERSION));
+                $osName = $os->getUniquePropertyValue($this->getProperty(OSService::PROPERTY_NAME));
+                $osVersion = $os->getUniquePropertyValue($this->getProperty(OSService::PROPERTY_VERSION));
                 $approvedOsFormatted[$osName->getLabel()][] = $osVersion->__toString();
             }
         }
@@ -98,6 +86,17 @@ class OS extends \tao_actions_SaSModule
             'success' => $requirementsService->osComplies(),
             'approvedOs' => $approvedOsFormatted
         ]);
+    }
+
+    /**
+     * @return OSService
+     */
+    protected function getClassService()
+    {
+        if (is_null($this->service)) {
+            $this->service = OSService::singleton();
+        }
+        return $this->service;
     }
 
 }
