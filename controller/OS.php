@@ -14,13 +14,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA;
  *
  */
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientDiagnostic\model\browserDetector\OSService;
+use oat\tao\model\clientDetector\classService\OsClassService;
+use oat\tao\model\clientDetector\ClientDetectorService;
+use oat\tao\model\clientDetector\detector\OSDetector;
 use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
@@ -38,8 +40,8 @@ class OS extends \tao_actions_SaSModule
         $myFormContainer = new \tao_actions_form_Instance($clazz, $instance);
 
         $myForm = $myFormContainer->getForm();
-        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(OSService::PROPERTY_NAME));
-        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(OSService::PROPERTY_VERSION));
+        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(OSDetector::PROPERTY_NAME));
+        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(OSDetector::PROPERTY_VERSION));
         $nameElement->addClass('select2');
         $versionElement->setHelp(
             "<span class=\"icon-help tooltipstered\" data-tooltip=\".web-browser-form .browser-version-tooltip-content\" data-tooltip-theme=\"info\"></span>"
@@ -76,8 +78,8 @@ class OS extends \tao_actions_SaSModule
 
         if (! empty($approvedOs)) {
             forEach($approvedOs as $os) {
-                $osName = $os->getUniquePropertyValue($this->getProperty(OSService::PROPERTY_NAME));
-                $osVersion = $os->getUniquePropertyValue($this->getProperty(OSService::PROPERTY_VERSION));
+                $osName = $os->getUniquePropertyValue($this->getOSDetector()->getNameProperty());
+                $osVersion = $os->getUniquePropertyValue($this->getOSDetector()->getVersionProperty());
                 $approvedOsFormatted[$osName->getLabel()][] = $osVersion->__toString();
             }
         }
@@ -89,12 +91,20 @@ class OS extends \tao_actions_SaSModule
     }
 
     /**
-     * @return OSService
+     * @return OSDetector
+     */
+    protected function getOSDetector()
+    {
+        return $this->getServiceLocator()->get(ClientDetectorService::SERVICE_ID)->getOSDetector();
+    }
+
+    /**
+     * @return OsClassService
      */
     protected function getClassService()
     {
         if (is_null($this->service)) {
-            $this->service = OSService::singleton();
+            $this->service = OsClassService::singleton();
         }
         return $this->service;
     }

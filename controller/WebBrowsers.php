@@ -14,13 +14,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA;
  *
  */
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
+use oat\tao\model\clientDetector\classService\WebBrowserClassService;
+use oat\tao\model\clientDetector\ClientDetectorService;
+use oat\tao\model\clientDetector\detector\WebBrowserDetector;
 use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
@@ -33,7 +35,7 @@ class WebBrowsers extends \tao_actions_SaSModule
     protected function getClassService()
     {
         if (is_null($this->service)) {
-            $this->service = WebBrowserService::singleton();
+            $this->service = WebBrowserClassService::singleton();
         }
         return $this->service;
     }
@@ -46,8 +48,8 @@ class WebBrowsers extends \tao_actions_SaSModule
         $myFormContainer = new \tao_actions_form_Instance($clazz, $instance);
 
         $myForm = $myFormContainer->getForm();
-        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserService::PROPERTY_NAME));
-        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserService::PROPERTY_VERSION));
+        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserDetector::PROPERTY_NAME));
+        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserDetector::PROPERTY_VERSION));
         $nameElement->addClass('select2');
         $versionElement->setHelp(
             "<span class=\"icon-help tooltipstered\" data-tooltip=\".web-browser-form .browser-version-tooltip-content\" data-tooltip-theme=\"info\"></span>"
@@ -84,8 +86,8 @@ class WebBrowsers extends \tao_actions_SaSModule
 
         if (! empty($approvedBrowsers)) {
             forEach($approvedBrowsers as $browser) {
-                $browserName = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_NAME));
-                $browserVersion = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_VERSION));
+                $browserName = $browser->getUniquePropertyValue($this->getWebBrowserDetector()->getNameProperty());
+                $browserVersion = $browser->getUniquePropertyValue($this->getWebBrowserDetector()->getVersionProperty());
                 $approvedBrowsersFormatted[$browserName->getLabel()][] = $browserVersion->__toString();
             }
         }
@@ -93,5 +95,13 @@ class WebBrowsers extends \tao_actions_SaSModule
             'success' => $requirementsService->browserComplies(),
             'approvedBrowsers' => $approvedBrowsersFormatted
         ]);
+    }
+
+    /**
+     * @return WebBrowserDetector
+     */
+    protected function getWebBrowserDetector()
+    {
+        return $this->getServiceLocator()->get(ClientDetectorService::SERVICE_ID)->getWebBrowserDetector();
     }
 }
