@@ -32,10 +32,10 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '4.1.0',
+    'version' => '4.2.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
-        'tao'                 => '>=21.0.0',
+        'tao'                 => '>=21.7.0',
         'taoDelivery'         => '>=11.0.0',
         'taoClientDiagnostic' => '>=3.0.0',
         'taoBackOffice'       => '>=3.0.0'
