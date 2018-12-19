@@ -14,16 +14,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2019 (original work) Open Assessment Technologies SA;
  *
  */
 
 namespace oat\taoClientRestrict\model\import;
 
-use oat\taoClientDiagnostic\model\browserDetector\OSService;
+use oat\tao\model\clientDetector\detector\OSDetector;
 
-class OsRdfImporter extends AbstractRdfImporter {
-
+class OsRdfImporter extends AbstractRdfImporter
+{
 
     /**
      * @see AbstractRdfImporter::getMandatoryProperties()
@@ -31,8 +31,8 @@ class OsRdfImporter extends AbstractRdfImporter {
     protected function getMandatoryProperties()
     {
         return [
-            OSService::PROPERTY_NAME,
-            OSService::PROPERTY_VERSION,
+            OSDetector::PROPERTY_NAME,
+            OSDetector::PROPERTY_VERSION,
         ];
     }
 
