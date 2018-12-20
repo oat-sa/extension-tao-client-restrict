@@ -32,7 +32,7 @@ return array(
     'label' => 'Client Restrictions',
     'description' => '',
     'license' => 'GPL-2.0',
-    'version' => '4.1.0',
+    'version' => '5.0.0',
     'author' => 'Open Assessment Technologies SA',
     'requires' => array(
         'tao'                 => '>=21.0.0',
