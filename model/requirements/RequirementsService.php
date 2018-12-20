@@ -21,8 +21,9 @@ namespace oat\taoClientRestrict\model\requirements;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\OntologyAwareTrait;
-use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
-use oat\taoClientDiagnostic\model\browserDetector\OSService;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
+use oat\taoClientRestrict\model\detection\OSClassService;
 
 class RequirementsService extends ConfigurableService implements RequirementsServiceInterface
 {
@@ -62,7 +63,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             if (!is_null($isBrowserRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
                 $browsers = $this->getApprovedBrowsers();
-                $isBrowserApproved = $this->complies($browsers, WebBrowserService::class);
+                $isBrowserApproved = $this->complies($browsers, BrowserClassService::singleton());
             }
         }
         return $isBrowserApproved;
@@ -93,7 +94,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
                 $approvedOs = $this->getApprovedOs($delivery);
-                $isOSApproved = $this->complies($approvedOs, OSService::class);
+                $isOSApproved = $this->complies($approvedOs, OSClassService::singleton());
             }
         }
         return $isOSApproved;
@@ -117,11 +118,11 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
      * @param string $conditionService
      * @return bool
      */
-    protected function complies(array $conditions, $conditionService)
+    protected function complies(array $conditions, DetectorClassService $conditionService)
     {
-        $clientName = $conditionService::singleton()->getClientName();
-        $clientVersion = $conditionService::singleton()->getClientVersion();
-        $clientNameResource = $conditionService::singleton()->getClientNameResource();
+        $clientName = $conditionService->getDetector()->getName();
+        $clientVersion = $conditionService->getDetector()->getVersion();
+        $clientNameResource = $conditionService->getClientNameResource();
         \common_Logger::i("Detected client: ${clientName} @ ${clientVersion}");
 
         $result = false;
@@ -129,7 +130,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         foreach ($conditions as $condition) {
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
-                $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
+                $requiredName = $condition->getOnePropertyValue($conditionService->getNameProperty());
 
                 if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
                     \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
@@ -139,8 +140,8 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
                     continue;
                 }
 
-                $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
-                if (-1 !== $this->versionCompare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
+                $requiredVersion = $condition->getOnePropertyValue($conditionService->getVersionProperty());
+                if (-1 !== $this->versionCompare($conditionService->getDetector()->getVersion(), $requiredVersion)) {
                     $result = true;
                     break;
                 }
