@@ -23,13 +23,13 @@ namespace oat\taoClientRestrict\model\detection;
 use Sinergi\BrowserDetector\Os;
 
 /**
- * Class OSClassService
+ * Class OsClassService
  *
  * Service to manage detected OS
  *
  * @package oat\taoClientRestrict\model\detection
  */
-class OSClassService extends DetectorClassService
+class OsClassService extends DetectorClassService
 {
     const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
     const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';

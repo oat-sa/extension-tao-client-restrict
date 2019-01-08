@@ -20,7 +20,7 @@
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientRestrict\model\detection\OSClassService;
+use oat\taoClientRestrict\model\detection\OsClassService;
 use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
@@ -38,8 +38,8 @@ class OS extends \tao_actions_SaSModule
         $myFormContainer = new \tao_actions_form_Instance($clazz, $instance);
 
         $myForm = $myFormContainer->getForm();
-        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(OSClassService::PROPERTY_NAME));
-        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(OSClassService::PROPERTY_VERSION));
+        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(OsClassService::PROPERTY_NAME));
+        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(OsClassService::PROPERTY_VERSION));
         $nameElement->addClass('select2');
         $versionElement->setHelp(
             "<span class=\"icon-help tooltipstered\" data-tooltip=\".web-browser-form .browser-version-tooltip-content\" data-tooltip-theme=\"info\"></span>"
@@ -89,12 +89,12 @@ class OS extends \tao_actions_SaSModule
     }
 
     /**
-     * @return OSClassService
+     * @return OsClassService
      */
     protected function getClassService()
     {
         if (is_null($this->service)) {
-            $this->service = OSClassService::singleton();
+            $this->service = OsClassService::singleton();
         }
         return $this->service;
     }

@@ -23,11 +23,11 @@ namespace oat\taoClientRestrict\test\unit\detection;
 use oat\generis\model\data\Model;
 use oat\generis\model\OntologyRdfs;
 use oat\generis\test\TestCase;
-use oat\taoClientRestrict\model\detection\OSClassService;
+use oat\taoClientRestrict\model\detection\OsClassService;
 use ReflectionClass;
 use Sinergi\BrowserDetector\Os;
 
-class OSClassServiceTest extends TestCase
+class OsClassServiceTest extends TestCase
 {
     public function testGetRootClass()
     {
@@ -37,7 +37,7 @@ class OSClassServiceTest extends TestCase
             ->with(OsClassService::ROOT_CLASS)
             ->willReturn('fixture');
 
-        $service = OSClassService::singleton();
+        $service = OsClassService::singleton();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getRootClass());
     }
@@ -73,7 +73,7 @@ class OSClassServiceTest extends TestCase
             ->method('getName')
             ->willReturn($detectedName);
 
-        $service = OSClassService::singleton();
+        $service = OsClassService::singleton();
         $reflection = new ReflectionClass($service);
         $reflection_property = $reflection->getProperty('detector');
         $reflection_property->setAccessible(true);
@@ -91,7 +91,7 @@ class OSClassServiceTest extends TestCase
             ->with(OsClassService::PROPERTY_NAME)
             ->willReturn('fixture');
 
-        $service = OSClassService::singleton();
+        $service = OsClassService::singleton();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getNameProperty());
     }
@@ -104,7 +104,7 @@ class OSClassServiceTest extends TestCase
             ->with(OsClassService::PROPERTY_VERSION)
             ->willReturn('fixture');
 
-        $service = OSClassService::singleton();
+        $service = OsClassService::singleton();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getVersionProperty());
     }

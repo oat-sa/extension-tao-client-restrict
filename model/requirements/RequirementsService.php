@@ -23,7 +23,7 @@ use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\OntologyAwareTrait;
 use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
-use oat\taoClientRestrict\model\detection\OSClassService;
+use oat\taoClientRestrict\model\detection\OsClassService;
 
 class RequirementsService extends ConfigurableService implements RequirementsServiceInterface
 {
@@ -95,7 +95,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
             if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
                 $approvedOs = $this->getApprovedOs($delivery);
-                $isOSApproved = $this->complies($approvedOs, OSClassService::singleton());
+                $isOSApproved = $this->complies($approvedOs, OsClassService::singleton());
             }
         }
         return $isOSApproved;
