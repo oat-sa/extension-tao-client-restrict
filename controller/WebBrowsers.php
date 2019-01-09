@@ -20,7 +20,7 @@
 
 namespace oat\taoClientRestrict\controller;
 
-use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
 
 /**
@@ -30,14 +30,6 @@ use oat\taoClientRestrict\model\requirements\RequirementsServiceInterface;
  */
 class WebBrowsers extends \tao_actions_SaSModule
 {
-    protected function getClassService()
-    {
-        if (is_null($this->service)) {
-            $this->service = WebBrowserService::singleton();
-        }
-        return $this->service;
-    }
-
 
     public function editInstance()
     {
@@ -46,8 +38,8 @@ class WebBrowsers extends \tao_actions_SaSModule
         $myFormContainer = new \tao_actions_form_Instance($clazz, $instance);
 
         $myForm = $myFormContainer->getForm();
-        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserService::PROPERTY_NAME));
-        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(WebBrowserService::PROPERTY_VERSION));
+        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::PROPERTY_NAME));
+        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::PROPERTY_VERSION));
         $nameElement->addClass('select2');
         $versionElement->setHelp(
             "<span class=\"icon-help tooltipstered\" data-tooltip=\".web-browser-form .browser-version-tooltip-content\" data-tooltip-theme=\"info\"></span>"
@@ -84,8 +76,8 @@ class WebBrowsers extends \tao_actions_SaSModule
 
         if (! empty($approvedBrowsers)) {
             forEach($approvedBrowsers as $browser) {
-                $browserName = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_NAME));
-                $browserVersion = $browser->getUniquePropertyValue($this->getProperty(WebBrowserService::PROPERTY_VERSION));
+                $browserName = $browser->getUniquePropertyValue($this->getClassService()->getNameProperty());
+                $browserVersion = $browser->getUniquePropertyValue($this->getClassService()->getNameProperty());
                 $approvedBrowsersFormatted[$browserName->getLabel()][] = $browserVersion->__toString();
             }
         }
@@ -93,5 +85,16 @@ class WebBrowsers extends \tao_actions_SaSModule
             'success' => $requirementsService->browserComplies(),
             'approvedBrowsers' => $approvedBrowsersFormatted
         ]);
+    }
+
+    /**
+     * @return BrowserClassService
+     */
+    protected function getClassService()
+    {
+        if (is_null($this->service)) {
+            $this->service = BrowserClassService::singleton();
+        }
+        return $this->service;
     }
 }

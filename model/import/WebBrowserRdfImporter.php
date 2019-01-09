@@ -14,16 +14,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2019 (original work) Open Assessment Technologies SA;
  *
  */
 
 namespace oat\taoClientRestrict\model\import;
 
-use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
 
-class WebBrowserRdfImporter extends AbstractRdfImporter {
-
+class WebBrowserRdfImporter extends AbstractRdfImporter
+{
 
     /**
      * @see AbstractRdfImporter::getMandatoryProperties()
@@ -31,8 +31,8 @@ class WebBrowserRdfImporter extends AbstractRdfImporter {
     protected function getMandatoryProperties()
     {
         return [
-            WebBrowserService::PROPERTY_VERSION,
-            WebBrowserService::PROPERTY_NAME,
+            BrowserClassService::PROPERTY_VERSION,
+            BrowserClassService::PROPERTY_NAME,
         ];
     }
 
@@ -43,6 +43,5 @@ class WebBrowserRdfImporter extends AbstractRdfImporter {
     {
         return __('You should only import Web Browser List data');
     }
-
 
 }
