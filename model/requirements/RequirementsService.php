@@ -14,15 +14,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2019 (original work) Open Assessment Technologies SA;
  *
  */
 namespace oat\taoClientRestrict\model\requirements;
 
 use oat\oatbox\service\ConfigurableService;
 use oat\generis\model\OntologyAwareTrait;
-use oat\taoClientDiagnostic\model\browserDetector\WebBrowserService;
-use oat\taoClientDiagnostic\model\browserDetector\OSService;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
+use oat\taoClientRestrict\model\detection\OsClassService;
 
 class RequirementsService extends ConfigurableService implements RequirementsServiceInterface
 {
@@ -58,22 +59,23 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     {
         $isBrowserApproved = true;
         if ($delivery !== null) {
-            $isBrowserRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
+            $isBrowserRestricted = $delivery->getOnePropertyValue($this->getProperty(self::PROPERTY_DELIVERY_RESTRICT_BROWSER_USAGE));
             if (!is_null($isBrowserRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isBrowserRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
                 $browsers = $this->getApprovedBrowsers();
-                $isBrowserApproved = $this->complies($browsers, WebBrowserService::class);
+                $isBrowserApproved = $this->complies($browsers, BrowserClassService::singleton());
             }
         }
         return $isBrowserApproved;
     }
 
-    public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null) {
+    public function getApprovedBrowsers(\core_kernel_classes_Resource $delivery = null)
+    {
         if ($delivery !== null) {
             $deliveryUri = $delivery->getUri();
             if (empty($this->approvedBrowsers[$deliveryUri])) {
                 $this->approvedBrowsers[$deliveryUri] = $delivery
-                    ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
+                    ->getPropertyValuesCollection($this->getProperty(self::PROPERTY_DELIVERY_APPROVED_BROWSER))
                     ->toArray();
             }
             return $this->approvedBrowsers[$deliveryUri];
@@ -89,22 +91,23 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
     {
         $isOSApproved = true;
         if ($delivery !== null) {
-            $isOSRestricted = $delivery->getOnePropertyValue(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
+            $isOSRestricted = $delivery->getOnePropertyValue($this->getProperty(self::PROPERTY_DELIVERY_RESTRICT_OS_USAGE));
             if (!is_null($isOSRestricted) && self::URI_DELIVERY_COMPLY_ENABLED == $isOSRestricted->getUri()) {
                 //@TODO property caching  - anyway we are operating with complied
                 $approvedOs = $this->getApprovedOs($delivery);
-                $isOSApproved = $this->complies($approvedOs, OSService::class);
+                $isOSApproved = $this->complies($approvedOs, OsClassService::singleton());
             }
         }
         return $isOSApproved;
     }
 
-    public function getApprovedOs(\core_kernel_classes_Resource $delivery = null) {
+    public function getApprovedOs(\core_kernel_classes_Resource $delivery = null)
+    {
         if ($delivery !== null) {
             $deliveryUri = $delivery->getUri();
             if (empty($this->approvedOs[$deliveryUri])) {
                 $this->approvedOs[$deliveryUri] = $delivery
-                    ->getPropertyValuesCollection(new \core_kernel_classes_Property(self::PROPERTY_DELIVERY_APPROVED_OS))
+                    ->getPropertyValuesCollection($this->getProperty(self::PROPERTY_DELIVERY_APPROVED_OS))
                     ->toArray();
             }
             return $this->approvedOs[$deliveryUri];
@@ -114,33 +117,33 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
 
     /**
      * @param array $conditions
-     * @param string $conditionService
+     * @param DetectorClassService $conditionService
      * @return bool
      */
-    protected function complies(array $conditions, $conditionService)
+    protected function complies(array $conditions, DetectorClassService $conditionService)
     {
-        $clientName = $conditionService::singleton()->getClientName();
-        $clientVersion = $conditionService::singleton()->getClientVersion();
-        $clientNameResource = $conditionService::singleton()->getClientNameResource();
-        \common_Logger::i("Detected client: ${clientName} @ ${clientVersion}");
+        $clientName = $conditionService->getDetector()->getName();
+        $clientVersion = $conditionService->getDetector()->getVersion();
+        $clientNameResource = $conditionService->getClientNameResource();
+        $this->logInfo("Detected client: ${clientName} @ ${clientVersion}");
 
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
         foreach ($conditions as $condition) {
             if ($condition->exists() === true) {
                 /** @var \core_kernel_classes_Resource $requiredName */
-                $requiredName = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_NAME));
+                $requiredName = $condition->getOnePropertyValue($conditionService->getNameProperty());
 
                 if ($clientNameResource && !($clientNameResource->equals($requiredName))) {
-                    \common_Logger::i("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
+                    $this->logInfo("Client rejected. Required name is ${requiredName} but current name is ${clientName}.");
                     continue;
                 } elseif ($clientNameResource === null) {
-                    \common_Logger::i("Client rejected. Unknown client.");
+                    $this->logInfo("Client rejected. Unknown client.");
                     continue;
                 }
 
-                $requiredVersion = $condition->getOnePropertyValue(new \core_kernel_classes_Property($conditionService::PROPERTY_VERSION));
-                if (-1 !== $this->versionCompare($conditionService::singleton()->getClientVersion(), $requiredVersion)) {
+                $requiredVersion = $condition->getOnePropertyValue($conditionService->getVersionProperty());
+                if (-1 !== $this->versionCompare($conditionService->getDetector()->getVersion(), $requiredVersion)) {
                     $result = true;
                     break;
                 }

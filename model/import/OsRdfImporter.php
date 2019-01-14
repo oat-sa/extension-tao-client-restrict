@@ -20,7 +20,7 @@
 
 namespace oat\taoClientRestrict\model\import;
 
-use oat\taoClientDiagnostic\model\browserDetector\OSService;
+use oat\taoClientRestrict\model\detection\OsClassService;
 
 class OsRdfImporter extends AbstractRdfImporter {
 
@@ -31,8 +31,8 @@ class OsRdfImporter extends AbstractRdfImporter {
     protected function getMandatoryProperties()
     {
         return [
-            OSService::PROPERTY_NAME,
-            OSService::PROPERTY_VERSION,
+            OsClassService::PROPERTY_NAME,
+            OsClassService::PROPERTY_VERSION,
         ];
     }
 

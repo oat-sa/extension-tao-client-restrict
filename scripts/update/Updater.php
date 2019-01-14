@@ -123,7 +123,7 @@ class Updater extends common_ext_ExtensionUpdater {
             $this->setVersion('4.0.1');
         }
 
-        $this->skip('4.0.1', '4.1.0');
+        $this->skip('4.0.1', '5.0.0');
     }
 
 }
