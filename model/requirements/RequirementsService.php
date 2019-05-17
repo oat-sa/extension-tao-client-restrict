@@ -125,7 +125,7 @@ class RequirementsService extends ConfigurableService implements RequirementsSer
         $clientName = $conditionService->getDetector()->getName();
         $clientVersion = $conditionService->getDetector()->getVersion();
         $clientNameResource = $conditionService->getClientNameResource();
-        $this->logInfo("Detected client: ${clientName} @ ${clientVersion}");
+        $this->logDebug("Detected client: ${clientName} @ ${clientVersion}");
 
         $result = false;
         /** @var \core_kernel_classes_Property $browser */
