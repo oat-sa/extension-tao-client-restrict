@@ -124,6 +124,30 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('4.0.1', '5.0.1');
+
+        if ($this->isVersion('5.0.1')) {
+            $extension = $this->getServiceManager()
+                ->get(\common_ext_ExtensionsManager::SERVICE_ID)
+                ->getExtensionById('taoClientDiagnostic');
+            $oldClientDiagConfig = $extension->getConfig('clientDiag');
+
+            $oldClientDiagConfig['diagnostic']['testers']['browserVersion'] = [
+                'enabled' => true,
+                'level' => 1,
+                'tester' => 'taoClientRestrict/diagnosticTools/browser/tester',
+                'customMsgKey' => 'diagBrowserCheckResult'
+            ];
+            $oldClientDiagConfig['diagnostic']['testers']['osVersion'] = [
+                'enabled' => true,
+                'level' => 1,
+                'tester' => 'taoClientRestrict/diagnosticTools/os/tester',
+                'customMsgKey' => 'diagOsCheckResult'
+            ];
+
+            $extension->setConfig('clientDiag', $oldClientDiagConfig);
+
+            $this->setVersion('5.0.2');
+        }
     }
 
 }
