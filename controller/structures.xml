@@ -18,7 +18,7 @@
                 </trees>
                 <actions>
                     <action id="web-browser-class-properties" name="Properties"
-                            url="/taoClientRestrict/WebBrowsers/editClassProperties" group="content" context="class">
+                            url="/taoClientRestrict/WebBrowsers/editClassLabel" group="content" context="class">
                         <icon id="icon-edit"/>
                     </action>
                     <action id="web-browser-class-new" name="New Class" url="/taoClientRestrict/WebBrowsers/addSubClass"
@@ -58,7 +58,7 @@
                     />
                 </trees>
                 <actions>
-                    <action id="os-class-properties" name="Properties" url="/taoClientRestrict/OS/editClassProperties"
+                    <action id="os-class-properties" name="Properties" url="/taoClientRestrict/OS/editClassLabel"
                             group="content" context="class">
                         <icon id="icon-edit"/>
                     </action>
