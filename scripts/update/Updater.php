@@ -28,6 +28,7 @@ use oat\taoClientDiagnostic\model\ClientDiagnosticRoles;
 use oat\taoClientRestrict\controller\WebBrowsers;
 use oat\taoClientRestrict\controller\OS;
 use oat\tao\model\user\TaoRoles;
+use oat\taoClientRestrict\install\RegisterClientDiagTester;
 
 /**
  *
@@ -124,6 +125,13 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('4.0.1', '5.0.0');
+
+        if ($this->isVersion('5.0.0')) {
+            $installScript = new RegisterClientDiagTester();
+            $installScript->setServiceLocator($this->getServiceManager());
+            $installScript([]);
+            $this->setVersion('5.0.0.1');
+        }
     }
 
 }
