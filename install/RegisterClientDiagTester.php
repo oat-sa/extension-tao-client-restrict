@@ -35,13 +35,13 @@ class RegisterClientDiagTester extends \common_ext_action_InstallAction
         $extension = \common_ext_ExtensionsManager::singleton()->getExtensionById('taoClientDiagnostic');
         $config = $extension->getConfig('clientDiag');
 
-        $config['testers']['browserVersion'] = [
+        $config['diagnostic']['testers']['browserVersion'] = [
             'enabled' => true,
             'level' => 1,
             'tester' => 'taoClientRestrict/diagnosticTools/browser/tester',
             'customMsgKey' => 'diagBrowserCheckResult'
         ];
-        $config['testers']['osVersion'] = [
+        $config['diagnostic']['testers']['osVersion'] = [
             'enabled' => true,
             'level' => 1,
             'tester' => 'taoClientRestrict/diagnosticTools/os/tester',
