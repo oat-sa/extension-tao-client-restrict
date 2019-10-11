@@ -26,12 +26,12 @@ use oat\generis\test\TestCase;
 use oat\taoClientRestrict\model\detection\OsClassService;
 use ReflectionClass;
 use Sinergi\BrowserDetector\Os;
-
+use \oat\generis\model\data\Ontology;
 class OsClassServiceTest extends TestCase
 {
     public function testGetRootClass()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getClass']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
             ->with(OsClassService::ROOT_CLASS)
@@ -59,7 +59,7 @@ class OsClassServiceTest extends TestCase
             )
             ->willReturn([$resource]);
 
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getClass']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
             ->with(OsClassService::MAKE_CLASS)
@@ -85,7 +85,7 @@ class OsClassServiceTest extends TestCase
 
     public function testGetNameProperty()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(OsClassService::PROPERTY_NAME)
@@ -98,7 +98,7 @@ class OsClassServiceTest extends TestCase
 
     public function testGetVersionProperty()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(OsClassService::PROPERTY_VERSION)
