@@ -26,12 +26,13 @@ use oat\generis\test\TestCase;
 use oat\taoClientRestrict\model\detection\BrowserClassService;
 use ReflectionClass;
 use Sinergi\BrowserDetector\Browser;
+use \oat\generis\model\data\Ontology;
 
 class BrowserClassServiceTest extends TestCase
 {
     public function testGetRootClass()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getClass']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
             ->with(BrowserClassService::ROOT_CLASS)
@@ -59,7 +60,7 @@ class BrowserClassServiceTest extends TestCase
             )
             ->willReturn([$resource]);
 
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getClass']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
             ->with(BrowserClassService::MAKE_CLASS)
@@ -85,7 +86,7 @@ class BrowserClassServiceTest extends TestCase
 
     public function testGetNameProperty()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(BrowserClassService::PROPERTY_NAME)
@@ -98,7 +99,7 @@ class BrowserClassServiceTest extends TestCase
 
     public function testGetVersionProperty()
     {
-        $model = $this->getMockForAbstractClass(Model::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(BrowserClassService::PROPERTY_VERSION)
