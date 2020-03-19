@@ -20,14 +20,15 @@
  */
 namespace oat\taoClientRestrict\scripts\update;
 
-use \common_ext_ExtensionUpdater;
-use oat\tao\scripts\update\OntologyUpdater;
-use oat\tao\model\accessControl\func\AccessRule;
-use oat\tao\model\accessControl\func\AclProxy;
-use oat\taoClientDiagnostic\model\ClientDiagnosticRoles;
-use oat\taoClientRestrict\controller\WebBrowsers;
-use oat\taoClientRestrict\controller\OS;
 use oat\tao\model\user\TaoRoles;
+use \common_ext_ExtensionUpdater;
+use oat\taoClientRestrict\controller\OS;
+use oat\tao\scripts\update\OntologyUpdater;
+use oat\tao\model\accessControl\func\AclProxy;
+use oat\tao\model\accessControl\func\AccessRule;
+use oat\taoClientRestrict\controller\WebBrowsers;
+use oat\taoClientRestrict\model\import\ImportOsService;
+use oat\taoClientRestrict\model\import\ImportBrowsersService;
 
 /**
  *
@@ -150,6 +151,16 @@ class Updater extends common_ext_ExtensionUpdater {
         }
 
         $this->skip('5.0.2', '5.0.4');
-    }
 
+        if ($this->isVersion('5.0.4')) {
+            $this->getServiceManager()->register(
+                ImportBrowsersService::SERVICE_ID,
+                new ImportBrowsersService()
+            );
+
+            $this->getServiceManager()->register(ImportOsService::SERVICE_ID, new ImportOsService());
+
+            $this->setVersion('5.1.0');
+        }
+    }
 }
