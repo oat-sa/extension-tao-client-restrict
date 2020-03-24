@@ -1,22 +1,38 @@
 <?php
 
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
+ */
+
+declare(strict_types=1);
+
 namespace oat\taoClientRestrict\scripts\tools\import;
 
-use oat\oatbox\action\Action;
 use common_report_Report as Report;
+use oat\oatbox\extension\script\ScriptAction;
 use oat\taoClientRestrict\model\import\Importer;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class ImportScript
  *
  * @package oat\taoClientRestrict\scripts\tools\import
  */
-abstract class ImportScript implements Action, ServiceLocatorAwareInterface
+abstract class ImportScript extends ScriptAction
 {
-    use ServiceLocatorAwareTrait;
-
     private const EXT_JSON = 'json';
     private const EXT_CSV = 'csv';
 
@@ -27,41 +43,58 @@ abstract class ImportScript implements Action, ServiceLocatorAwareInterface
     private $report;
 
     /**
-     * @param $params
-     *
+     * @return array
+     */
+    protected function provideOptions()
+    {
+        return [
+            'list' => [
+                'prefix' => 'l',
+                'longPrefix' => 'list',
+                'required' => true,
+                'description' => 'String or array',
+            ],
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function provideDescription()
+    {
+        return 'Allow to import authorized data while seeding.';
+    }
+
+    /**
      * @throws \common_exception_Error
      *
      * @return Report
      */
-    public function __invoke($params)
+    protected function run()
     {
         $this->report = Report::createInfo('Running script ' . static::class);
 
-        $data = $this->parseData($params);
+        $data = $this->parseData();
         $this->import($data);
 
         return $this->report;
     }
 
     /**
-     * @param array $params
-     *
      * @throws \common_exception_Error
      *
      * @return array
      */
-    protected function parseData(array $params): array
+    protected function parseData(): array
     {
-        if (!empty($params) || isset($params['list'])) {
-            if (is_array($params['list'])) {
-                $data = $params['list'];
-            } elseif (is_string($params['list']) && file_exists($params['list'])) {
-                $data = $this->parseFile($params['list']);
+        if ($this->hasOption('list')) {
+            $list = $this->getOption('list');
+
+            if (is_array($list)) {
+                $data = $list;
+            } elseif (is_string($list) && file_exists($list)) {
+                $data = $this->parseFile($list);
             }
-        } else {
-            $this->report->add(Report::createWarning(
-                'Required parameter `list` is missing. Nothing to import.'
-            ));
         }
 
         return $this->getValidData($data ?? []);
@@ -70,7 +103,7 @@ abstract class ImportScript implements Action, ServiceLocatorAwareInterface
     /**
      * @return string
      */
-    abstract protected function getServiceId(): string;
+    abstract protected function getServiceClass(): string;
 
     /**
      * @return Importer
@@ -78,7 +111,7 @@ abstract class ImportScript implements Action, ServiceLocatorAwareInterface
     private function getService(): Importer
     {
         if (!$this->service) {
-            $this->service = $this->getServiceLocator()->get($this->getServiceId());
+            $this->service = $this->getServiceLocator()->get($this->getServiceClass());
         }
 
         return $this->service;
@@ -126,7 +159,7 @@ abstract class ImportScript implements Action, ServiceLocatorAwareInterface
 
         foreach ($data as $index => $item) {
             if (!isset($item[Importer::PROPERTY_LABEL])) {
-                $this->report->add(Report::createWarning(sprintf(
+                $this->report->add(Report::createFailure(sprintf(
                     'Required property `label` for item %s is missing. The item will not be imported...',
                     $index
                 )));
@@ -137,7 +170,7 @@ abstract class ImportScript implements Action, ServiceLocatorAwareInterface
                 if ($service->nameExists($item[Importer::PROPERTY_NAME])) {
                     $item[Importer::PROPERTY_NAME] = $service->getNameUri($item[Importer::PROPERTY_NAME]);
                 } else {
-                    $this->report->add(Report::createWarning(sprintf(
+                    $this->report->add(Report::createFailure(sprintf(
                         'Property `name` for item %s is invalid. The item will not be imported...',
                         $index
                     )));

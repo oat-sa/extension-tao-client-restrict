@@ -150,17 +150,6 @@ class Updater extends common_ext_ExtensionUpdater {
             $this->setVersion('5.0.2');
         }
 
-        $this->skip('5.0.2', '5.0.4');
-
-        if ($this->isVersion('5.0.4')) {
-            $this->getServiceManager()->register(
-                ImportBrowsersService::SERVICE_ID,
-                new ImportBrowsersService()
-            );
-
-            $this->getServiceManager()->register(ImportOsService::SERVICE_ID, new ImportOsService());
-
-            $this->setVersion('5.1.0');
-        }
+        $this->skip('5.0.2', '5.1.0');
     }
 }

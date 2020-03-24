@@ -1,5 +1,25 @@
 <?php
 
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
+ */
+
+declare(strict_types=1);
+
 namespace oat\taoClientRestrict\model\import;
 
 use oat\generis\model\OntologyAwareTrait;
@@ -98,22 +118,22 @@ abstract class Importer extends ConfigurableService
      */
     private function createFolderStructure(array $classMap): \core_kernel_classes_Class
     {
-        $parent = $this->getClassService()->getRootClass();
+        $classResource = $this->getClassService()->getRootClass();
 
         /** @var string $label */
         foreach ($classMap as $label) {
             $lowercaseLabel = strtolower($label);
-            $parentUri = array_search($lowercaseLabel, $this->classMap, true);
+            $parentUri = $this->classMap[$lowercaseLabel] ?? false;
 
             if ($parentUri === false) {
-                $parent = $this->getClassService()->createSubClass($parent, $label);
-                $this->classMap[$parent->getUri()] = $lowercaseLabel;
+                $classResource = $this->getClassService()->createSubClass($classResource, $label);
+                $this->classMap[$lowercaseLabel] = $classResource->getUri();
             } else {
-                $parent = $this->getClass($parentUri);
+                $classResource = $this->getClass($parentUri);
             }
         }
 
-        return $parent;
+        return $classResource;
     }
 
     /**
