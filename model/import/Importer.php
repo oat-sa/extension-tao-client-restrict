@@ -52,7 +52,7 @@ abstract class Importer extends ConfigurableService
     {
         /** @var array $properties */
         foreach ($data as $properties) {
-            $class = $this->createFolderStructure($properties[self::PROPERTY_CLASS_MAP] ?? []);
+            $class = $this->createClassesStructure($properties[self::PROPERTY_CLASS_MAP] ?? []);
 
             $instance = $class->createInstance($properties[self::PROPERTY_LABEL]);
             $this->setProperties($instance, $properties);
@@ -116,7 +116,7 @@ abstract class Importer extends ConfigurableService
      *
      * @return \core_kernel_classes_Class
      */
-    private function createFolderStructure(array $classMap): \core_kernel_classes_Class
+    private function createClassesStructure(array $classMap): \core_kernel_classes_Class
     {
         /** @var \core_kernel_classes_Class $class */
         $class = $this->getClassService()->getRootClass();

@@ -25,6 +25,8 @@ namespace oat\taoClientRestrict\scripts\tools\import;
 use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\taoClientRestrict\model\import\Importer;
+use oat\taoClientRestrict\model\reader\ReaderFactory;
+use oat\taoClientRestrict\model\import\ImportDataProcessor;
 
 /**
  * Class ImportScript
@@ -33,9 +35,6 @@ use oat\taoClientRestrict\model\import\Importer;
  */
 abstract class ImportScript extends ScriptAction
 {
-    private const EXT_JSON = 'json';
-    private const EXT_CSV = 'csv';
-
     /** @var Importer */
     private $service;
 
@@ -52,7 +51,8 @@ abstract class ImportScript extends ScriptAction
                 'prefix' => 'l',
                 'longPrefix' => 'list',
                 'required' => true,
-                'description' => 'String or array',
+                'description' => 'List of approved browsers/OS. Can be represented as an array of browsers/OS or a path'
+                    . ' to the file with the necessary data. Supported file extensions: JSON and CSV.',
             ],
         ];
     }
@@ -92,7 +92,7 @@ abstract class ImportScript extends ScriptAction
 
             if (is_array($list)) {
                 $data = $list;
-            } elseif (is_string($list) && file_exists($list)) {
+            } elseif (is_string($list)) {
                 $data = $this->parseFile($list);
             }
         }
@@ -120,29 +120,20 @@ abstract class ImportScript extends ScriptAction
     /**
      * @param string $filename
      *
+     * @throws \common_exception_Error
+     *
      * @return array
      */
     private function parseFile(string $filename): array
     {
-        switch (strtolower(pathinfo($filename, PATHINFO_EXTENSION))) {
-            case self::EXT_JSON:
-                $data = json_decode(file_get_contents($filename), true);
-                break;
-            case self::EXT_CSV:
-                $lines = array_filter(explode("\n", file_get_contents($filename)));
-                $items = array_map('str_getcsv', $lines);
-                $keys = $items[0];
-
-                $data = array_map(static function ($item) use ($keys) {
-                    return array_combine($keys, $item);
-                }, array_slice($items, 1));
-                break;
-            default:
-                $data = [];
-                break;
+        try {
+            $data = ReaderFactory::create($filename)->toArray();
+        } catch (\common_exception_Error $e) {
+            $this->report->add(Report::createFailure($e->getMessage()));
+            $data = [];
         }
 
-        return is_array($data) ? $data : [];
+        return $data;
     }
 
     /**
@@ -154,31 +145,16 @@ abstract class ImportScript extends ScriptAction
      */
     private function getValidData(array $data): array
     {
-        $validData = [];
-        $service = $this->getService();
+        /** @var ImportDataProcessor $importDataProcessor */
+        $importDataProcessor = $this->getServiceLocator()->get(ImportDataProcessor::class);
+        $validData = $importDataProcessor->process($data, $this->getService());
+        $errors = $importDataProcessor->getErrors();
 
-        foreach ($data as $index => $item) {
-            if (!isset($item[Importer::PROPERTY_LABEL])) {
-                $this->report->add(Report::createFailure(sprintf(
-                    'Required property `label` for item %s is missing. The item will not be imported...',
-                    $index
-                )));
-                continue;
+        if (!empty($errors)) {
+            /** @var Report $error */
+            foreach ($errors as $error) {
+                $this->report->add($error);
             }
-
-            if (isset($item[Importer::PROPERTY_NAME])) {
-                if ($service->nameExists($item[Importer::PROPERTY_NAME])) {
-                    $item[Importer::PROPERTY_NAME] = $service->getNameUri($item[Importer::PROPERTY_NAME]);
-                } else {
-                    $this->report->add(Report::createFailure(sprintf(
-                        'Property `name` for item %s is invalid. The item will not be imported...',
-                        $index
-                    )));
-                    continue;
-                }
-            }
-
-            $validData[] = $item;
         }
 
         return $validData;
