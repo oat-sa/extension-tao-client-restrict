@@ -52,9 +52,9 @@ abstract class Importer extends ConfigurableService
     {
         /** @var array $properties */
         foreach ($data as $properties) {
-            $folder = $this->createFolderStructure($properties[self::PROPERTY_CLASS_MAP] ?? []);
+            $class = $this->createFolderStructure($properties[self::PROPERTY_CLASS_MAP] ?? []);
 
-            $instance = $this->getClassService()->createInstance($folder, $properties[self::PROPERTY_LABEL]);
+            $instance = $class->createInstance($properties[self::PROPERTY_LABEL]);
             $this->setProperties($instance, $properties);
         }
     }
@@ -118,7 +118,8 @@ abstract class Importer extends ConfigurableService
      */
     private function createFolderStructure(array $classMap): \core_kernel_classes_Class
     {
-        $classResource = $this->getClassService()->getRootClass();
+        /** @var \core_kernel_classes_Class $class */
+        $class = $this->getClassService()->getRootClass();
 
         /** @var string $label */
         foreach ($classMap as $label) {
@@ -126,14 +127,14 @@ abstract class Importer extends ConfigurableService
             $parentUri = $this->classMap[$lowercaseLabel] ?? false;
 
             if ($parentUri === false) {
-                $classResource = $this->getClassService()->createSubClass($classResource, $label);
-                $this->classMap[$lowercaseLabel] = $classResource->getUri();
+                $class = $class->createSubClass($label);
+                $this->classMap[$lowercaseLabel] = $class->getUri();
             } else {
-                $classResource = $this->getClass($parentUri);
+                $class = $this->getClass($parentUri);
             }
         }
 
-        return $classResource;
+        return $class;
     }
 
     /**
