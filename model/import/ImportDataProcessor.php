@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace oat\taoClientRestrict\model\import;
 
-use common_report_Report as Report;
 use oat\oatbox\service\ConfigurableService;
 
 /**
@@ -32,26 +31,26 @@ use oat\oatbox\service\ConfigurableService;
  */
 class ImportDataProcessor extends ConfigurableService
 {
-    /** @var array */
-    private $errors;
-
     /**
      * @param array $data
      * @param Importer $importer
+     * @param bool $strictMode
+     *
+     * @throws \common_exception_Error
      *
      * @return array
      */
-    public function process(array $data, Importer $importer): array
+    public function process(array $data, Importer $importer, bool $strictMode = false): array
     {
         $validData = [];
-        $this->errors = [];
+        $errors = [];
 
         foreach ($data as $index => $item) {
             if (!isset($item[Importer::PROPERTY_LABEL])) {
-                $this->fail(sprintf(
+                $errors[] = sprintf(
                     'Required property `label` for item %s is missing. The item will not be imported...',
                     $index
-                ));
+                );
                 continue;
             }
 
@@ -59,10 +58,10 @@ class ImportDataProcessor extends ConfigurableService
                 if ($importer->nameExists($item[Importer::PROPERTY_NAME])) {
                     $item[Importer::PROPERTY_NAME] = $importer->getNameUri($item[Importer::PROPERTY_NAME]);
                 } else {
-                    $this->fail(sprintf(
+                    $errors[] = sprintf(
                         'Property `name` for item %s is invalid. The item will not be imported...',
                         $index
-                    ));
+                    );
                     continue;
                 }
             }
@@ -70,24 +69,13 @@ class ImportDataProcessor extends ConfigurableService
             $validData[] = $item;
         }
 
-        return $validData;
-    }
+        if ($strictMode && !empty($errors)) {
+            throw new \common_exception_Error(json_encode($errors));
+        }
 
-    /**
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param string $message
-     *
-     * @return Report
-     */
-    private function fail(string $message): Report
-    {
-        $this->errors[] = Report::createFailure($message);
+        return [
+            'data' => $validData,
+            'errors' => $errors,
+        ];
     }
 }

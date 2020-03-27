@@ -25,7 +25,6 @@ namespace oat\taoClientRestrict\scripts\tools\import;
 use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
 use oat\taoClientRestrict\model\import\Importer;
-use oat\taoClientRestrict\model\reader\ReaderFactory;
 use oat\taoClientRestrict\model\import\ImportDataProcessor;
 
 /**
@@ -42,6 +41,23 @@ abstract class ImportScript extends ScriptAction
     private $report;
 
     /**
+     * @example --list - An array of approved browsers/OS
+     * [
+     *     [
+     *         'classMap' => [
+     *             'Class 1',
+     *             'Class 2',
+     *         ],
+     *         'label' => 'Test label',
+     *         'name' => 'Chrome',
+     *         'version' => '1.0.0',
+     *     ],
+     * ]
+     * @example classMap - Will generate the necessary folder structure from the root class (Optional)
+     * @example label - Label for browser/OS (Required)
+     * @example name - Browser/OS name (Optional)
+     * @example version - Browser/OS version (Optional)
+     *
      * @return array
      */
     protected function provideOptions()
@@ -51,8 +67,7 @@ abstract class ImportScript extends ScriptAction
                 'prefix' => 'l',
                 'longPrefix' => 'list',
                 'required' => true,
-                'description' => 'List of approved browsers/OS. Can be represented as an array of browsers/OS or a path'
-                    . ' to the file with the necessary data. Supported file extensions: JSON and CSV.',
+                'description' => 'List of approved browsers/OS. Should be represented as an json array of browsers/OS.',
             ],
         ];
     }
@@ -66,6 +81,7 @@ abstract class ImportScript extends ScriptAction
     }
 
     /**
+     * @throws \common_Exception
      * @throws \common_exception_Error
      *
      * @return Report
@@ -73,37 +89,55 @@ abstract class ImportScript extends ScriptAction
     protected function run()
     {
         $this->report = Report::createInfo('Running script ' . static::class);
-
-        $data = $this->parseData();
-        $this->import($data);
+        $this->import($this->getData());
 
         return $this->report;
     }
 
     /**
+     * @throws \common_Exception
      * @throws \common_exception_Error
      *
      * @return array
      */
-    protected function parseData(): array
+    protected function getData(): array
     {
         if ($this->hasOption('list')) {
             $list = $this->getOption('list');
-
-            if (is_array($list)) {
-                $data = $list;
-            } elseif (is_string($list)) {
-                $data = $this->parseFile($list);
-            }
         }
 
-        return $this->getValidData($data ?? []);
+        if (!isset($list) || !is_array($list)) {
+            $list = [];
+        }
+
+        return $this->getValidData($list);
     }
 
     /**
      * @return string
      */
     abstract protected function getServiceClass(): string;
+
+    /**
+     * @param array $data
+     *
+     * @throws \common_Exception
+     * @throws \common_exception_Error
+     *
+     * @return array
+     */
+    private function getValidData(array $data): array
+    {
+        /** @var ImportDataProcessor $importDataProcessor */
+        $importDataProcessor = $this->getServiceLocator()->get(ImportDataProcessor::class);
+        $processedData = $importDataProcessor->process($data, $this->getService());
+
+        foreach ($processedData['errors'] as $error) {
+            $this->report->add(Report::createFailure($error));
+        }
+
+        return $processedData['data'];
+    }
 
     /**
      * @return Importer
@@ -115,49 +149,6 @@ abstract class ImportScript extends ScriptAction
         }
 
         return $this->service;
-    }
-
-    /**
-     * @param string $filename
-     *
-     * @throws \common_exception_Error
-     *
-     * @return array
-     */
-    private function parseFile(string $filename): array
-    {
-        try {
-            $data = ReaderFactory::create($filename)->toArray();
-        } catch (\common_exception_Error $e) {
-            $this->report->add(Report::createFailure($e->getMessage()));
-            $data = [];
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @throws \common_exception_Error
-     *
-     * @return array
-     */
-    private function getValidData(array $data): array
-    {
-        /** @var ImportDataProcessor $importDataProcessor */
-        $importDataProcessor = $this->getServiceLocator()->get(ImportDataProcessor::class);
-        $validData = $importDataProcessor->process($data, $this->getService());
-        $errors = $importDataProcessor->getErrors();
-
-        if (!empty($errors)) {
-            /** @var Report $error */
-            foreach ($errors as $error) {
-                $this->report->add($error);
-            }
-        }
-
-        return $validData;
     }
 
     /**
