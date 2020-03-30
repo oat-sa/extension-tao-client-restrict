@@ -24,8 +24,8 @@ namespace oat\taoClientRestrict\scripts\tools\import;
 
 use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
-use oat\taoClientRestrict\model\classManager\ClassManager;
 use oat\taoClientRestrict\model\useCase\import\ImportHandler;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
  * Class ImportScript
@@ -55,10 +55,10 @@ class ImportScript extends ScriptAction
      * @example name - Browser/OS name (Required)
      * @example version - Browser/OS version (Required)
      *
-     * @example --manager - Class manager which will be used for import.
+     * @example --service - Class service which will be used for import.
      *     List of available managers:
-     *         - oat\taoClientRestrict\model\classManager\BrowserClassManager
-     *         - oat\taoClientRestrict\model\classManager\OsClassManager
+     *         - oat\taoClientRestrict\model\detection\BrowserClassService
+     *         - oat\taoClientRestrict\model\detection\OsClassService
      *
      * @return array
      */
@@ -72,11 +72,11 @@ class ImportScript extends ScriptAction
                 'description' => 'List of authorized browsers/OS. Should be represented as an json array of browsers/OS.',
                 'defaultValue' => [],
             ],
-            'manager' => [
-                'prefix' => 'm',
-                'longPrefix' => 'manager',
+            'service' => [
+                'prefix' => 's',
+                'longPrefix' => 'service',
                 'required' => true,
-                'description' => 'Class manager which will be used for import (string).',
+                'description' => 'Class service which will be used for import (string).',
             ],
         ];
     }
@@ -96,17 +96,17 @@ class ImportScript extends ScriptAction
      */
     protected function run()
     {
-        $managerClass = $this->getOption('manager');
-        $this->report = Report::createInfo(sprintf('Importing... (%s)', $managerClass));
+        $serviceClass = $this->getOption('service');
+        $this->report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
 
         $serviceLocator = $this->getServiceLocator();
 
-        /** @var ClassManager $classManager */
-        $classManager = $serviceLocator->get($managerClass);
+        /** @var DetectorClassService $classService */
+        $classService = $serviceLocator->get($serviceClass);
         /** @var ImportHandler $handler */
         $handler = $serviceLocator->get(ImportHandler::class);
 
-        $errors = $handler->handle($this->getOption('list'), $classManager);
+        $errors = $handler->handle($this->getOption('list'), $classService);
 
         foreach ($errors as $error) {
             $this->report->add(Report::createFailure($error));

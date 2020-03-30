@@ -25,7 +25,7 @@ namespace oat\taoClientRestrict\model\useCase\import;
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
-use oat\taoClientRestrict\model\classManager\ClassManager;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
  * Class Importer
@@ -34,18 +34,18 @@ use oat\taoClientRestrict\model\classManager\ClassManager;
  */
 class Importer extends ConfigurableService
 {
-    /** @var ClassManager */
-    private $classManager;
+    /** @var DetectorClassService */
+    private $classService;
 
     /** @var array */
     private $classMap = [];
 
     /**
-     * @param ClassManager $classManager
+     * @param DetectorClassService $classService
      */
-    public function setClassManager(ClassManager $classManager): void
+    public function setClassService(DetectorClassService $classService): void
     {
-        $this->classManager = $classManager;
+        $this->classService = $classService;
     }
 
     /**
@@ -64,7 +64,7 @@ class Importer extends ConfigurableService
      */
     private function createClassesStructure(array $classMap): core_kernel_classes_Class
     {
-        $class = $this->classManager->getRootClass();
+        $class = $this->classService->getRootClass();
 
         /** @var string $label */
         foreach ($classMap as $label) {
@@ -76,7 +76,7 @@ class Importer extends ConfigurableService
                 $class = $class->createSubClass($label);
                 $this->classMap[$lowercaseLabel] = $class->getUri();
             } else {
-                $class = $this->classManager->getClass($parentUri);
+                $class = $this->classService->getClass($parentUri);
             }
         }
 
@@ -93,8 +93,8 @@ class Importer extends ConfigurableService
     {
         $instance = $class->createInstance($dto->getLabel());
         $instance->setPropertiesValues([
-            $this->classManager->getNameProperty() => $dto->getName(),
-            $this->classManager->getVersionProperty() => $dto->getVersion(),
+            $this->classService->getNamePropertyUri() => $dto->getName(),
+            $this->classService->getVersionPropertyUri() => $dto->getVersion(),
         ]);
 
         return $instance;

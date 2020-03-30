@@ -20,14 +20,23 @@
 
 namespace oat\taoClientRestrict\model\detection;
 
-use oat\generis\model\OntologyAwareTrait;
+use core_kernel_classes_Class;
+use core_kernel_classes_Property;
+use core_kernel_classes_Resource;
 use oat\generis\model\OntologyRdfs;
+use oat\tao\model\OntologyClassService;
 
-abstract class DetectorClassService extends \tao_models_classes_ClassService
+/**
+ * Class DetectorClassService
+ *
+ * @package oat\taoClientRestrict\model\detection
+ */
+abstract class DetectorClassService extends OntologyClassService
 {
-    use OntologyAwareTrait;
-
     protected $detector;
+
+    /** @var array */
+    private $names = [];
 
     /**
      * Get the detector for Web Browser
@@ -39,38 +48,62 @@ abstract class DetectorClassService extends \tao_models_classes_ClassService
     /**
      * Get the name property
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     abstract public function getNameProperty();
 
     /**
+     * @return string
+     */
+    abstract public function getNamePropertyUri(): string;
+
+    /**
      * Get the version property
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     abstract public function getVersionProperty();
 
     /**
+     * @return string
+     */
+    abstract public function getVersionPropertyUri(): string;
+
+    /**
+     * @return array
+     */
+    public function getNames(): array
+    {
+        if (!$this->names) {
+            $nameInstances = $this->getNameProperty()->getRange()->getInstances();
+
+            /** @var \core_kernel_classes_Resource $nameInstance */
+            foreach ($nameInstances as $nameInstance) {
+                $this->names[strtolower($nameInstance->getLabel())] = $nameInstance->getUri();
+            }
+        }
+
+        return $this->names;
+    }
+
+    /**
      * Get the parent class
      *
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      */
     abstract protected function getMakeClass();
 
     /**
-     * @return \core_kernel_classes_Resource|null
+     * @return core_kernel_classes_Resource|null
      */
     public function getClientNameResource()
     {
         $detectedName = $this->getDetector()->getName();
-
         $results = $this->getMakeClass()->searchInstances(
-            [ OntologyRdfs::RDFS_LABEL => $detectedName ],
-            [ 'like' => false ]
+            [OntologyRdfs::RDFS_LABEL => $detectedName],
+            ['like' => false]
         );
 
-        $result = array_pop($results);
-
-        return $result;
+        return array_pop($results);
     }
 }

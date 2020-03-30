@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\model\useCase\import;
 
 use oat\oatbox\service\ConfigurableService;
-use oat\taoClientRestrict\model\classManager\ClassManager;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
  * Class ImportHandler
@@ -37,16 +37,16 @@ class ImportHandler extends ConfigurableService
 
     /**
      * @param array $data
-     * @param ClassManager $classManager
+     * @param DetectorClassService $classService
      *
      * @return array
      */
-    public function handle(array $data, ClassManager $classManager): array
+    public function handle(array $data, DetectorClassService $classService): array
     {
         $errors = [];
 
         if (!empty($data)) {
-            $names = $classManager->getNames();
+            $names = $classService->getNames();
 
             foreach ($data as $index => $item) {
                 if ($this->getValidator()->isValid($item, $names) === false) {
@@ -58,7 +58,7 @@ class ImportHandler extends ConfigurableService
                     continue;
                 }
 
-                $this->getImporter($classManager)->import($this->getDataProcessor()->process($item, $names));
+                $this->getImporter($classService)->import($this->getDataProcessor()->process($item, $names));
             }
         }
 
@@ -86,15 +86,15 @@ class ImportHandler extends ConfigurableService
     }
 
     /**
-     * @param ClassManager $classManager
+     * @param DetectorClassService $classService
      *
      * @return Importer
      */
-    private function getImporter(ClassManager $classManager): Importer
+    private function getImporter(DetectorClassService $classService): Importer
     {
         /** @var Importer $importer */
         $importer = $this->getServiceLocator()->get(Importer::class);
-        $importer->setClassManager($classManager);
+        $importer->setClassService($classService);
 
         return $importer;
     }

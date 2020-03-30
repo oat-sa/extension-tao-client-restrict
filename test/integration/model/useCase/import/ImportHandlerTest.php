@@ -6,12 +6,12 @@ use oat\generis\test\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use oat\taoClientRestrict\model\useCase\import\Importer;
 use oat\taoClientRestrict\model\useCase\import\ClassDTO;
-use oat\taoClientRestrict\model\classManager\ClassManager;
-use oat\taoClientRestrict\model\classManager\OsClassManager;
+use oat\taoClientRestrict\model\detection\OsClassService;
 use oat\taoClientRestrict\model\useCase\import\ImportHandler;
 use oat\taoClientRestrict\model\useCase\import\DataValidator;
 use oat\taoClientRestrict\model\useCase\import\DataProcessor;
-use oat\taoClientRestrict\model\classManager\BrowserClassManager;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
+use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
  * Class ImportHandlerTest
@@ -46,13 +46,13 @@ class ImportHandlerTest extends TestCase
             Importer::class => $importerMock,
         ]);
 
-        /** @var ClassManager|MockObject $classManagerMock */
-        $classManagerMock = $this->createClassManagerMock($data['classManager']);
+        /** @var DetectorClassService|MockObject $classServiceMock */
+        $classServiceMock = $this->createClassServiceMock($data['classService']);
 
         $importHandler = new ImportHandler();
         $importHandler->setServiceLocator($serviceLocatorMock);
 
-        $errors = $importHandler->handle($data['data'], $classManagerMock);
+        $errors = $importHandler->handle($data['data'], $classServiceMock);
 
         $this->assertEquals($expected['errors'], $errors);
         $this->assertEquals(
@@ -100,8 +100,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 1,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [
@@ -147,8 +147,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -194,8 +194,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -241,8 +241,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -289,8 +289,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [
@@ -333,8 +333,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 0,
                             'result' => [
@@ -381,8 +381,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 1,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [
@@ -428,8 +428,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -475,8 +475,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -522,8 +522,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [],
@@ -570,8 +570,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => BrowserClassManager::class,
+                    'classService' => [
+                        'class' => BrowserClassService::class,
                         'getNames' => [
                             'expects' => 1,
                             'result' => [
@@ -614,8 +614,8 @@ class ImportHandlerTest extends TestCase
                     'importer' => [
                         'expects' => 0,
                     ],
-                    'classManager' => [
-                        'class' => OsClassManager::class,
+                    'classService' => [
+                        'class' => OsClassService::class,
                         'getNames' => [
                             'expects' => 0,
                             'result' => [
@@ -709,27 +709,24 @@ class ImportHandlerTest extends TestCase
     }
 
     /**
-     * @param array $classManager
+     * @param array $classService
      *
      * @return MockObject
      */
-    private function createClassManagerMock(array $classManager): MockObject
+    private function createClassServiceMock(array $classService): MockObject
     {
-        $classManagerMock = $this->createMock($classManager['class']);
-        $classManagerMock
-            ->expects($this->exactly($classManager['getNames']['expects']))
+        $classServiceMock = $this->createMock($classService['class']);
+        $classServiceMock
+            ->expects($this->exactly($classService['getNames']['expects']))
             ->method('getNames')
-            ->willReturn($classManager['getNames']['result']);
-        $classManagerMock
-            ->method('getRootProperty')
-            ->willReturn($classManager['rootProperty']);
-        $classManagerMock
-            ->method('getNameProperty')
-            ->willReturn($classManager['nameProperty']);
-        $classManagerMock
-            ->method('getVersionProperty')
-            ->willReturn($classManager['versionProperty']);
+            ->willReturn($classService['getNames']['result']);
+        $classServiceMock
+            ->method('getNamePropertyUri')
+            ->willReturn($classService['nameProperty']);
+        $classServiceMock
+            ->method('getVersionPropertyUri')
+            ->willReturn($classService['versionProperty']);
 
-        return $classManagerMock;
+        return $classServiceMock;
     }
 }
