@@ -667,7 +667,7 @@ class ImportHandlerTest extends TestCase
         $dataProcessorMock
             ->expects($this->exactly($dataProcessor['expects']))
             ->method('process')
-            ->willReturn($this->createClassDTO($dataProcessor['item']));
+            ->willReturn($this->createClassDtoMock($dataProcessor['item']));
 
         return $dataProcessorMock;
     }
@@ -675,17 +675,22 @@ class ImportHandlerTest extends TestCase
     /**
      * @param array $item
      *
-     * @return ClassDTO
+     * @return MockObject
      */
-    private function createClassDTO(array $item): ClassDTO
+    private function createClassDtoMock(array $item): MockObject
     {
-        $dto = new ClassDTO();
-        $dto
-            ->setLabel($item['label'])
-            ->setName($item['name'])
-            ->setVersion($item['version']);
+        $classDtoMock = $this->createMock(ClassDTO::class);
+        $classDtoMock
+            ->method('getLabel')
+            ->willReturn($item['label']);
+        $classDtoMock
+            ->method('getName')
+            ->willReturn($item['name']);
+        $classDtoMock
+            ->method('getVersion')
+            ->willReturn($item['version']);
 
-        return $dto;
+        return $classDtoMock;
     }
 
     /**
