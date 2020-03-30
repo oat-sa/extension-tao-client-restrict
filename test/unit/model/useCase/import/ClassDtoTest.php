@@ -20,47 +20,40 @@
 
 declare(strict_types=1);
 
-namespace oat\taoClientRestrict\model\useCase\import;
+namespace oat\taoClientRestrict\test\unit\useCase\import;
 
-use oat\oatbox\service\ConfigurableService;
+use oat\generis\test\TestCase;
+use oat\taoClientRestrict\model\useCase\import\ClassDTO;
 
 /**
- * Class DataProcessor
+ * Class ClassDtoTest
  *
- * @package oat\taoClientRestrict\model\useCase\import
+ * @package oat\taoClientRestrict\test\unit\useCase\import
  */
-class DataProcessor extends ConfigurableService
+class ClassDtoTest extends TestCase
 {
-    /**
-     * @param array $item
-     * @param array $names
-     *
-     * @return ClassDTO
-     */
-    public function process(array $item, array $names): ClassDTO
+    public function testClassDto(): void
     {
-        $item['name'] = $names[strtolower($item['name'])] ?? $item['name'];
+        $properties = [
+            'classMap' => ['Test class map'],
+            'label' => 'Test label',
+            'name' => 'Test name',
+            'version' => 'Test version',
+        ];
 
-        return $this->toDTO($item);
-    }
+        $classDto = new ClassDTO();
 
-    /**
-     * @param array $properties
-     *
-     * @return ClassDTO
-     */
-    private function toDTO(array $properties): ClassDTO
-    {
-        $dto = new ClassDTO();
-        $dto
+        $this->assertEquals([], $classDto->getClassMap());
+
+        $classDto
+            ->setClassMap($properties['classMap'])
             ->setLabel($properties['label'])
             ->setName($properties['name'])
             ->setVersion($properties['version']);
 
-        if (isset($properties['classMap'])) {
-            $dto->setClassMap($properties['classMap']);
-        }
-
-        return $dto;
+        $this->assertEquals($properties['classMap'], $classDto->getClassMap());
+        $this->assertEquals($properties['label'], $classDto->getLabel());
+        $this->assertEquals($properties['name'], $classDto->getName());
+        $this->assertEquals($properties['version'], $classDto->getVersion());
     }
 }

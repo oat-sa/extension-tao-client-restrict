@@ -42,14 +42,14 @@ class DataValidator extends ConfigurableService
     private $error;
 
     /**
-     * @param array $data
+     * @param array $item
      * @param array $names
      *
      * @return bool
      */
-    public function isValid(array $data, array $names): bool
+    public function isValid(array $item, array $names): bool
     {
-        if ($this->checkRequiredFields($data) === false || $this->nameExists($data, $names) === false) {
+        if ($this->checkRequiredFields($item) === false || $this->nameExists($item, $names) === false) {
             return false;
         }
 
@@ -65,14 +65,14 @@ class DataValidator extends ConfigurableService
     }
 
     /**
-     * @param array $data
+     * @param array $item
      *
      * @return bool
      */
-    private function checkRequiredFields(array $data): bool
+    private function checkRequiredFields(array $item): bool
     {
         foreach ($this->requiredFields as $field) {
-            if (array_key_exists($field, $data) === false) {
+            if (array_key_exists($field, $item) === false) {
                 $this->error = sprintf('Required property `%s` is missing.', $field);
 
                 return false;
@@ -83,14 +83,14 @@ class DataValidator extends ConfigurableService
     }
 
     /**
-     * @param array $data
+     * @param array $item
      * @param array $names
      *
      * @return bool
      */
-    private function nameExists(array $data, array $names): bool
+    private function nameExists(array $item, array $names): bool
     {
-        $isValid = array_key_exists(strtolower($data['name']), $names);
+        $isValid = array_key_exists(strtolower($item['name']), $names);
 
         if ($isValid === false) {
             $this->error = 'Property `name` is invalid.';

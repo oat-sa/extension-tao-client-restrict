@@ -32,9 +32,6 @@ use oat\taoClientRestrict\model\classManager\ClassManager;
  */
 class ImportHandler extends ConfigurableService
 {
-    /** @var ClassManager */
-    private $classManager;
-
     /** @var DataValidator */
     private $validator;
 
@@ -49,8 +46,7 @@ class ImportHandler extends ConfigurableService
         $errors = [];
 
         if (!empty($data)) {
-            $this->classManager = $classManager;
-            $names = $this->classManager->getNames();
+            $names = $classManager->getNames();
 
             foreach ($data as $index => $item) {
                 if ($this->getValidator()->isValid($item, $names) === false) {
@@ -62,7 +58,7 @@ class ImportHandler extends ConfigurableService
                     continue;
                 }
 
-                $this->getImporter()->import($this->getDataProcessor()->process($item, $names));
+                $this->getImporter($classManager)->import($this->getDataProcessor()->process($item, $names));
             }
         }
 
@@ -90,13 +86,15 @@ class ImportHandler extends ConfigurableService
     }
 
     /**
+     * @param ClassManager $classManager
+     *
      * @return Importer
      */
-    private function getImporter(): Importer
+    private function getImporter(ClassManager $classManager): Importer
     {
         /** @var Importer $importer */
         $importer = $this->getServiceLocator()->get(Importer::class);
-        $importer->setClassManager($this->classManager);
+        $importer->setClassManager($classManager);
 
         return $importer;
     }

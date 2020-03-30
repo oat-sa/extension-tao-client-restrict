@@ -1,0 +1,730 @@
+<?php
+
+namespace oat\taoClientRestrict\test\integration\useCase\import;
+
+use oat\generis\test\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use oat\taoClientRestrict\model\useCase\import\Importer;
+use oat\taoClientRestrict\model\useCase\import\ClassDTO;
+use oat\taoClientRestrict\model\classManager\ClassManager;
+use oat\taoClientRestrict\model\classManager\OsClassManager;
+use oat\taoClientRestrict\model\useCase\import\ImportHandler;
+use oat\taoClientRestrict\model\useCase\import\DataValidator;
+use oat\taoClientRestrict\model\useCase\import\DataProcessor;
+use oat\taoClientRestrict\model\classManager\BrowserClassManager;
+
+/**
+ * Class ImportHandlerTest
+ *
+ * @package oat\taoClientRestrict\test\integration\useCase\import
+ */
+class ImportHandlerTest extends TestCase
+{
+    private const BROWSER_PROPERTY_ROOT = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
+    private const BROWSER_PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
+    private const BROWSER_PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
+
+    private const OS_PROPERTY_ROOT = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
+    private const OS_PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
+    private const OS_PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
+
+    /**
+     * @dataProvider dataProvider
+     *
+     * @param array $data
+     * @param array $expected
+     */
+    public function testImportHandler(array $data, array $expected): void
+    {
+        $dataValidatorMock = $this->createDataValidatorMock($data['dataValidator']);
+        $dataProcessorMock = $this->createDataProcessorMock($data['dataProcessor']);
+        $importerMock = $this->createImporterMock($data['importer']);
+
+        $serviceLocatorMock = $this->getServiceLocatorMock([
+            DataValidator::class => $dataValidatorMock,
+            DataProcessor::class => $dataProcessorMock,
+            Importer::class => $importerMock,
+        ]);
+
+        /** @var ClassManager|MockObject $classManagerMock */
+        $classManagerMock = $this->createClassManagerMock($data['classManager']);
+
+        $importHandler = new ImportHandler();
+        $importHandler->setServiceLocator($serviceLocatorMock);
+
+        $errors = $importHandler->handle($data['data'], $classManagerMock);
+
+        $this->assertEquals($expected['errors'], $errors);
+        $this->assertEquals(
+            $expected['numberOfImportedItems'],
+            count($data['data']) - count($errors)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProvider(): array
+    {
+        $validName = 'validName';
+        $lowercaseValidName = strtolower($validName);
+
+        return [
+            'Browser valid data' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => $validName,
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => true,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => null,
+                            'expects' => 0,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 1,
+                        'item' => [
+                            'label' => 'Test label',
+                            'name' => 'Valid name',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 1,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 1,
+                    'errors' => [],
+                ],
+            ],
+            'Browser missed label' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'name' => $validName,
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `label` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `label` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'Browser missed name' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `name` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `name` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'Browser missed version' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => $validName,
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `version` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `version` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'Browser invalid name' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => 'invalidName',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Property `name` is invalid.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Property `name` is invalid.). The item will not be imported.'
+                    ],
+                ],
+            ],
+            'Browser nothing to import' => [
+                'data' => [
+                    'data' => [],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => true,
+                            'expects' => 0,
+                        ],
+                        'getError' => [
+                            'result' => null,
+                            'expects' => 0,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 0,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::BROWSER_PROPERTY_ROOT,
+                        'nameProperty' => self::BROWSER_PROPERTY_NAME,
+                        'versionProperty' => self::BROWSER_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [],
+                ],
+            ],
+            'OS valid data' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => $validName,
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => true,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => null,
+                            'expects' => 0,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 1,
+                        'item' => [
+                            'label' => 'Test label',
+                            'name' => 'Valid name',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 1,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 1,
+                    'errors' => [],
+                ],
+            ],
+            'OS missed label' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'name' => $validName,
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `label` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `label` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'OS missed name' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `name` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `name` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'OS missed version' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => $validName,
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Required property `version` is missing.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Required property `version` is missing.). The item will not be imported.',
+                    ],
+                ],
+            ],
+            'OS invalid name' => [
+                'data' => [
+                    'data' => [
+                        [
+                            'label' => 'Test label',
+                            'name' => 'invalidName',
+                            'version' => 'Test version',
+                        ],
+                    ],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => false,
+                            'expects' => 1,
+                        ],
+                        'getError' => [
+                            'result' => 'Property `name` is invalid.',
+                            'expects' => 1,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => BrowserClassManager::class,
+                        'getNames' => [
+                            'expects' => 1,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [
+                        'Item 0 is invalid (Property `name` is invalid.). The item will not be imported.'
+                    ],
+                ],
+            ],
+            'OS nothing to import' => [
+                'data' => [
+                    'data' => [],
+                    'dataValidator' => [
+                        'isValid' => [
+                            'result' => true,
+                            'expects' => 0,
+                        ],
+                        'getError' => [
+                            'result' => null,
+                            'expects' => 0,
+                        ],
+                    ],
+                    'dataProcessor' => [
+                        'expects' => 0,
+                        'item' => [
+                            'label' => '',
+                            'name' => '',
+                            'version' => '',
+                        ],
+                    ],
+                    'importer' => [
+                        'expects' => 0,
+                    ],
+                    'classManager' => [
+                        'class' => OsClassManager::class,
+                        'getNames' => [
+                            'expects' => 0,
+                            'result' => [
+                                $lowercaseValidName => 'Valid name',
+                            ],
+                        ],
+                        'rootProperty' => self::OS_PROPERTY_ROOT,
+                        'nameProperty' => self::OS_PROPERTY_NAME,
+                        'versionProperty' => self::OS_PROPERTY_VERSION,
+                    ],
+                ],
+                'expected' => [
+                    'numberOfImportedItems' => 0,
+                    'errors' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $dataValidator
+     *
+     * @return MockObject
+     */
+    private function createDataValidatorMock(array $dataValidator): MockObject
+    {
+        $dataValidatorMock = $this->createMock(DataValidator::class);
+
+        $dataValidatorMock
+            ->expects($this->exactly($dataValidator['isValid']['expects']))
+            ->method('isValid')
+            ->willReturn($dataValidator['isValid']['result']);
+        $dataValidatorMock
+            ->expects($this->exactly($dataValidator['getError']['expects']))
+            ->method('getError')
+            ->willReturn($dataValidator['getError']['result']);
+
+        return $dataValidatorMock;
+    }
+
+    /**
+     * @param array $dataProcessor
+     *
+     * @return MockObject
+     */
+    private function createDataProcessorMock(array $dataProcessor): MockObject
+    {
+        $dataProcessorMock = $this->createMock(DataProcessor::class);
+        $dataProcessorMock
+            ->expects($this->exactly($dataProcessor['expects']))
+            ->method('process')
+            ->willReturn($this->createClassDTO($dataProcessor['item']));
+
+        return $dataProcessorMock;
+    }
+
+    /**
+     * @param array $item
+     *
+     * @return ClassDTO
+     */
+    private function createClassDTO(array $item): ClassDTO
+    {
+        $dto = new ClassDTO();
+        $dto
+            ->setLabel($item['label'])
+            ->setName($item['name'])
+            ->setVersion($item['version']);
+
+        return $dto;
+    }
+
+    /**
+     * @param array $importer
+     *
+     * @return MockObject
+     */
+    private function createImporterMock(array $importer): MockObject
+    {
+        $importerMock = $this->createMock(Importer::class);
+        $importerMock
+            ->expects($this->exactly($importer['expects']))
+            ->method('import');
+
+        return $importerMock;
+    }
+
+    /**
+     * @param array $classManager
+     *
+     * @return MockObject
+     */
+    private function createClassManagerMock(array $classManager): MockObject
+    {
+        $classManagerMock = $this->createMock($classManager['class']);
+        $classManagerMock
+            ->expects($this->exactly($classManager['getNames']['expects']))
+            ->method('getNames')
+            ->willReturn($classManager['getNames']['result']);
+        $classManagerMock
+            ->method('getRootProperty')
+            ->willReturn($classManager['rootProperty']);
+        $classManagerMock
+            ->method('getNameProperty')
+            ->willReturn($classManager['nameProperty']);
+        $classManagerMock
+            ->method('getVersionProperty')
+            ->willReturn($classManager['versionProperty']);
+
+        return $classManagerMock;
+    }
+}
