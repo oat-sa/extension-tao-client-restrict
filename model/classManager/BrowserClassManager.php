@@ -2,6 +2,8 @@
 
 namespace oat\taoClientRestrict\model\classManager;
 
+use oat\taoClientRestrict\model\detection\BrowserClassService;
+
 /**
  * Class BrowserClassManager
  *
@@ -9,12 +11,16 @@ namespace oat\taoClientRestrict\model\classManager;
  */
 class BrowserClassManager extends ClassManager
 {
+    public const PROPERTY_ROOT = BrowserClassService::ROOT_CLASS;
+    public const PROPERTY_NAME = BrowserClassService::PROPERTY_NAME;
+    public const PROPERTY_VERSION = BrowserClassService::PROPERTY_VERSION;
+
     /**
      * @return string
      */
     public function getRootProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
+        return self::PROPERTY_ROOT;
     }
 
     /**
@@ -22,7 +28,7 @@ class BrowserClassManager extends ClassManager
      */
     public function getNameProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
+        return self::PROPERTY_NAME;
     }
 
     /**
@@ -30,6 +36,6 @@ class BrowserClassManager extends ClassManager
      */
     public function getVersionProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
+        return self::PROPERTY_VERSION;
     }
 }

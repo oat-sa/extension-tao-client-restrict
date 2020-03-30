@@ -2,6 +2,8 @@
 
 namespace oat\taoClientRestrict\model\classManager;
 
+use oat\taoClientRestrict\model\detection\OsClassService;
+
 /**
  * Class OsClassManager
  *
@@ -9,12 +11,16 @@ namespace oat\taoClientRestrict\model\classManager;
  */
 class OsClassManager extends ClassManager
 {
+    public const PROPERTY_CLASS = OsClassService::ROOT_CLASS;
+    public const PROPERTY_NAME = OsClassService::PROPERTY_NAME;
+    public const PROPERTY_VERSION = OsClassService::PROPERTY_VERSION;
+
     /**
      * @return string
      */
     public function getRootProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
+        return self::PROPERTY_CLASS;
     }
 
     /**
@@ -22,7 +28,7 @@ class OsClassManager extends ClassManager
      */
     public function getNameProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
+        return self::PROPERTY_NAME;
     }
 
     /**
@@ -30,6 +36,6 @@ class OsClassManager extends ClassManager
      */
     public function getVersionProperty(): string
     {
-        return 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
+        return self::PROPERTY_VERSION;
     }
 }
