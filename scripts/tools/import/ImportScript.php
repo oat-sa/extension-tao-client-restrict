@@ -34,21 +34,18 @@ use oat\taoClientRestrict\model\detection\DetectorClassService;
  */
 class ImportScript extends ScriptAction
 {
-    /** @var Report */
-    private $report;
-
     /**
      * @example --list - An array of approved browsers/OS
      *     [
-     *         [
-     *             'classMap' => [
-     *                 'Class 1',
-     *                 'Class 2',
+     *         {
+     *             "classMap": [
+     *                 "Class 1",
+     *                 "Class 2"
      *             ],
-     *             'label' => 'Test label',
-     *             'name' => 'Chrome',
-     *             'version' => '1.0.0',
-     *         ],
+     *             "label": "Test label",
+     *             "name": "Chrome",
+     *             "version": "1.0.0"
+     *         },
      *     ]
      * @example classMap - Will generate the necessary folder structure from the root class (Optional)
      * @example label - Label for browser/OS (Required)
@@ -97,7 +94,7 @@ class ImportScript extends ScriptAction
     protected function run()
     {
         $serviceClass = $this->getOption('service');
-        $this->report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
+        $report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
 
         $serviceLocator = $this->getServiceLocator();
 
@@ -109,9 +106,9 @@ class ImportScript extends ScriptAction
         $errors = $handler->handle($this->getOption('list'), $classService);
 
         foreach ($errors as $error) {
-            $this->report->add(Report::createFailure($error));
+            $report->add(Report::createFailure($error));
         }
 
-        return $this->report;
+        return $report;
     }
 }

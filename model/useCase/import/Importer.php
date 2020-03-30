@@ -57,6 +57,11 @@ class Importer extends ConfigurableService
         $this->createInstance($class, $dto);
     }
 
+    public function resetClassMap(): void
+    {
+        $this->classMap = [];
+    }
+
     /**
      * @param array $classMap
      *

@@ -47,6 +47,7 @@ class ImportHandler extends ConfigurableService
 
         if (!empty($data)) {
             $names = $classService->getNames();
+            $importer = $this->getImporter($classService);
 
             foreach ($data as $index => $item) {
                 if ($this->getValidator()->isValid($item, $names) === false) {
@@ -58,8 +59,10 @@ class ImportHandler extends ConfigurableService
                     continue;
                 }
 
-                $this->getImporter($classService)->import($this->getDataProcessor()->process($item, $names));
+                $importer->import($this->getDataProcessor()->process($item, $names));
             }
+
+            $importer->resetClassMap();
         }
 
         return $errors;
