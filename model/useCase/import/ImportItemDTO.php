@@ -23,14 +23,14 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\model\useCase\import;
 
 /**
- * Class ClassDTO
+ * Class ImportItemDTO
  *
  * @package oat\taoClientRestrict\model\useCase\import
  */
-class ClassDTO
+class ImportItemDTO
 {
     /** @var array */
-    private $classMap = [];
+    private $classMap;
 
     /** @var string */
     private $label;
@@ -42,23 +42,34 @@ class ClassDTO
     private $version;
 
     /**
+     * ImportItemDTO constructor.
+     *
+     * @param array $properties
+     */
+    public function __construct(array $properties)
+    {
+        $this->classMap = $properties['classMap'] ?? [];
+        $this->label = $properties['label'];
+        $this->name = $properties['name'];
+        $this->version = $properties['version'];
+    }
+
+    /**
+     * @param array $properties
+     *
+     * @return static
+     */
+    public static function create(array $properties): self
+    {
+        return new self($properties);
+    }
+
+    /**
      * @return array
      */
     public function getClassMap(): array
     {
         return $this->classMap;
-    }
-
-    /**
-     * @param array $classMap
-     *
-     * @return $this
-     */
-    public function setClassMap(array $classMap): self
-    {
-        $this->classMap = $classMap;
-
-        return $this;
     }
 
     /**
@@ -70,18 +81,6 @@ class ClassDTO
     }
 
     /**
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function setLabel(string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getName(): string
@@ -90,34 +89,10 @@ class ClassDTO
     }
 
     /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getVersion(): string
     {
         return $this->version;
-    }
-
-    /**
-     * @param string $version
-     *
-     * @return $this
-     */
-    public function setVersion(string $version): self
-    {
-        $this->version = $version;
-
-        return $this;
     }
 }

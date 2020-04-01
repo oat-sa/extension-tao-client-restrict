@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
-use oat\taoClientRestrict\model\useCase\import\ClassDTO;
+use oat\taoClientRestrict\model\useCase\import\ImportItemDTO;
 use oat\taoClientRestrict\model\useCase\import\DataValidator;
 
 /**
@@ -45,7 +45,6 @@ class DataValidatorTest extends TestCase
         $isValid = $dataValidator->isValid($data['item'], $data['names']);
 
         $this->assertEquals($expected['isValid'], $isValid);
-        $this->assertEquals($expected['error'], $dataValidator->getError());
     }
 
     /**
@@ -70,7 +69,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => true,
-                    'error' => null,
                 ],
             ],
             [
@@ -83,7 +81,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => false,
-                    'error' => 'Required property `label` is missing.',
                 ],
             ],
             [
@@ -96,7 +93,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => false,
-                    'error' => 'Required property `name` is missing.',
                 ],
             ],
             [
@@ -109,7 +105,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => false,
-                    'error' => 'Required property `version` is missing.',
                 ],
             ],
             [
@@ -125,7 +120,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => true,
-                    'error' => null,
                 ],
             ],
             [
@@ -139,7 +133,6 @@ class DataValidatorTest extends TestCase
                 ],
                 'expected' => [
                     'isValid' => false,
-                    'error' => 'Property `name` is invalid.',
                 ],
             ],
         ];

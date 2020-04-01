@@ -23,15 +23,14 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
-use oat\taoClientRestrict\model\useCase\import\ClassDTO;
-use oat\taoClientRestrict\model\useCase\import\DataProcessor;
+use oat\taoClientRestrict\model\useCase\import\ImportItemDTO;
 
 /**
- * Class DataProcessorTest
+ * Class ImportItemDtoTest
  *
  * @package oat\taoClientRestrict\test\unit\useCase\import
  */
-class DataProcessorTest extends TestCase
+class ImportItemDtoTest extends TestCase
 {
     /**
      * @dataProvider dataProvider
@@ -39,13 +38,14 @@ class DataProcessorTest extends TestCase
      * @param array $data
      * @param array $expected
      */
-    public function testDataProcessor(array $data, array $expected): void
+    public function testClassDto(array $data, array $expected): void
     {
-        $dataProcessor = new DataProcessor();
-        $result = $dataProcessor->process($data['item'], $data['names']);
+        $classDto = ImportItemDTO::create($data);
 
-        $this->assertInstanceOf(ClassDTO::class, $result);
-        $this->assertEquals($expected['name'], $result->getName());
+        $this->assertEquals($expected['classMap'], $classDto->getClassMap());
+        $this->assertEquals($expected['label'], $classDto->getLabel());
+        $this->assertEquals($expected['name'], $classDto->getName());
+        $this->assertEquals($expected['version'], $classDto->getVersion());
     }
 
     /**
@@ -53,32 +53,32 @@ class DataProcessorTest extends TestCase
      */
     public function dataProvider(): array
     {
-        $validName = 'validName';
-        $item = [
-            'label' => 'Test label',
-            'name' => $validName,
-            'version' => 'Test version',
-        ];
-
         return [
-            [
+            'With class map' => [
                 'data' => [
-                    'item' => $item,
-                    'names' => [
-                        strtolower($validName) => 'Name 1',
-                    ],
+                    'classMap' => ['Test class map'],
+                    'label' => 'Test label',
+                    'name' => 'Test name',
+                    'version' => 'Test version',
                 ],
                 'expected' => [
-                    'name' => 'Name 1',
+                    'classMap' => ['Test class map'],
+                    'label' => 'Test label',
+                    'name' => 'Test name',
+                    'version' => 'Test version',
                 ],
             ],
-            [
+            'Without class map' => [
                 'data' => [
-                    'item' => $item,
-                    'names' => [],
+                    'label' => 'Test label',
+                    'name' => 'Test name',
+                    'version' => 'Test version',
                 ],
                 'expected' => [
-                    'name' => $validName,
+                    'classMap' => [],
+                    'label' => 'Test label',
+                    'name' => 'Test name',
+                    'version' => 'Test version',
                 ],
             ],
         ];

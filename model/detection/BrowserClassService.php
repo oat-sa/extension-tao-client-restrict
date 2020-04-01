@@ -33,8 +33,8 @@ class BrowserClassService extends DetectorClassService
 {
     public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
     public const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserMake';
-    public const PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
-    public const PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
+    public const BROWSER_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
+    public const BROWSER_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
 
     /**
      * Get the root class for Web Browser
@@ -74,7 +74,7 @@ class BrowserClassService extends DetectorClassService
      */
     public function getNamePropertyUri(): string
     {
-        return self::PROPERTY_NAME;
+        return self::BROWSER_NAME;
     }
 
     /**
@@ -92,7 +92,7 @@ class BrowserClassService extends DetectorClassService
      */
     public function getVersionPropertyUri(): string
     {
-        return self::PROPERTY_VERSION;
+        return self::BROWSER_VERSION;
     }
 
     /**

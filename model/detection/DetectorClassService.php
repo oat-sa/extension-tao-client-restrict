@@ -72,7 +72,7 @@ abstract class DetectorClassService extends OntologyClassService
     /**
      * @return array
      */
-    public function getNames(): array
+    public function getExistingNames(): array
     {
         if (!$this->names) {
             $nameInstances = $this->getNameProperty()->getRange()->getInstances();

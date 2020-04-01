@@ -89,7 +89,7 @@ class BrowserClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(BrowserClassService::PROPERTY_NAME)
+            ->with(BrowserClassService::BROWSER_NAME)
             ->willReturn('fixture');
 
         $service = BrowserClassService::singleton();
@@ -102,7 +102,7 @@ class BrowserClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(BrowserClassService::PROPERTY_VERSION)
+            ->with(BrowserClassService::BROWSER_VERSION)
             ->willReturn('fixture');
 
         $service = BrowserClassService::singleton();

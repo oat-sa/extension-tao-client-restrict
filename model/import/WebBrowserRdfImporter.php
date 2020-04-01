@@ -31,8 +31,8 @@ class WebBrowserRdfImporter extends AbstractRdfImporter
     protected function getMandatoryProperties()
     {
         return [
-            BrowserClassService::PROPERTY_VERSION,
-            BrowserClassService::PROPERTY_NAME,
+            BrowserClassService::BROWSER_VERSION,
+            BrowserClassService::BROWSER_NAME,
         ];
     }
 

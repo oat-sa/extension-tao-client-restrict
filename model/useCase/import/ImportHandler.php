@@ -46,23 +46,26 @@ class ImportHandler extends ConfigurableService
         $errors = [];
 
         if (!empty($data)) {
-            $names = $classService->getNames();
+            $itemsToImport = [];
+
+            $names = $classService->getExistingNames();
             $importer = $this->getImporter($classService);
 
             foreach ($data as $index => $item) {
                 if ($this->getValidator()->isValid($item, $names) === false) {
-                    $errors[] = sprintf(
-                        'Item %s is invalid (%s). The item will not be imported.',
-                        $index,
-                        $this->getValidator()->getError()
-                    );
+                    foreach ($this->getValidator()->getErrors() as $error) {
+                        $errors[] = sprintf('Item %s is invalid (%s).', $index, $error);
+                    }
+
+                    $errors[] = sprintf('Item %s will not be imported.', $index);
                     continue;
                 }
 
-                $importer->import($this->getDataProcessor()->process($item, $names));
+                $item['name'] = $names[strtolower($item['name'])] ?? $item['name'];
+                $itemsToImport[] = ImportItemDTO::create($item);
             }
 
-            $importer->resetClassMap();
+            $importer->import($itemsToImport);
         }
 
         return $errors;
@@ -78,14 +81,6 @@ class ImportHandler extends ConfigurableService
         }
 
         return $this->validator;
-    }
-
-    /**
-     * @return DataProcessor
-     */
-    private function getDataProcessor(): DataProcessor
-    {
-        return $this->getServiceLocator()->get(DataProcessor::class);
     }
 
     /**

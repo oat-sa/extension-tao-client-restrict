@@ -88,7 +88,7 @@ class OsClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(OsClassService::PROPERTY_NAME)
+            ->with(OsClassService::OS_NAME)
             ->willReturn('fixture');
 
         $service = OsClassService::singleton();
@@ -101,7 +101,7 @@ class OsClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(OsClassService::PROPERTY_VERSION)
+            ->with(OsClassService::OS_VERSION)
             ->willReturn('fixture');
 
         $service = OsClassService::singleton();

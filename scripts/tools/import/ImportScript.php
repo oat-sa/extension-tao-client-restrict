@@ -87,26 +87,28 @@ class ImportScript extends ScriptAction
     }
 
     /**
-     * @throws \common_exception_Error
-     *
      * @return Report
      */
     protected function run()
     {
-        $serviceClass = $this->getOption('service');
-        $report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
+        try {
+            $serviceClass = $this->getOption('service');
+            $report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
+    
+            $serviceLocator = $this->getServiceLocator();
 
-        $serviceLocator = $this->getServiceLocator();
+            /** @var DetectorClassService $classService */
+            $classService = $serviceLocator->get($serviceClass);
+            /** @var ImportHandler $handler */
+            $handler = $serviceLocator->get(ImportHandler::class);
 
-        /** @var DetectorClassService $classService */
-        $classService = $serviceLocator->get($serviceClass);
-        /** @var ImportHandler $handler */
-        $handler = $serviceLocator->get(ImportHandler::class);
+            $errors = $handler->handle($this->getOption('list'), $classService);
 
-        $errors = $handler->handle($this->getOption('list'), $classService);
-
-        foreach ($errors as $error) {
-            $report->add(Report::createFailure($error));
+            foreach ($errors as $error) {
+                $report->add(Report::createFailure($error));
+            }
+        } catch (\Throwable $exception) {
+            $report = Report::createFailure(sprintf('Cannot import data (%s).', $exception->getMessage()));
         }
 
         return $report;

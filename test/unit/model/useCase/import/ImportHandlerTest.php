@@ -1,15 +1,33 @@
 <?php
 
-namespace oat\taoClientRestrict\test\integration\useCase\import;
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
+ */
+
+declare(strict_types=1);
+
+namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use oat\taoClientRestrict\model\useCase\import\Importer;
-use oat\taoClientRestrict\model\useCase\import\ClassDTO;
 use oat\taoClientRestrict\model\detection\OsClassService;
 use oat\taoClientRestrict\model\useCase\import\ImportHandler;
 use oat\taoClientRestrict\model\useCase\import\DataValidator;
-use oat\taoClientRestrict\model\useCase\import\DataProcessor;
 use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
 
@@ -37,12 +55,10 @@ class ImportHandlerTest extends TestCase
     public function testImportHandler(array $data, array $expected): void
     {
         $dataValidatorMock = $this->createDataValidatorMock($data['dataValidator']);
-        $dataProcessorMock = $this->createDataProcessorMock($data['dataProcessor']);
         $importerMock = $this->createImporterMock($data['importer']);
 
         $serviceLocatorMock = $this->getServiceLocatorMock([
             DataValidator::class => $dataValidatorMock,
-            DataProcessor::class => $dataProcessorMock,
             Importer::class => $importerMock,
         ]);
 
@@ -51,14 +67,9 @@ class ImportHandlerTest extends TestCase
 
         $importHandler = new ImportHandler();
         $importHandler->setServiceLocator($serviceLocatorMock);
-
         $errors = $importHandler->handle($data['data'], $classServiceMock);
 
         $this->assertEquals($expected['errors'], $errors);
-        $this->assertEquals(
-            $expected['numberOfImportedItems'],
-            count($data['data']) - count($errors)
-        );
     }
 
     /**
@@ -84,17 +95,9 @@ class ImportHandlerTest extends TestCase
                             'result' => true,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => null,
+                        'getErrors' => [
+                            'result' => [],
                             'expects' => 0,
-                        ],
-                    ],
-                    'dataProcessor' => [
-                        'expects' => 1,
-                        'item' => [
-                            'label' => 'Test label',
-                            'name' => 'Valid name',
-                            'version' => 'Test version',
                         ],
                     ],
                     'importer' => [
@@ -102,7 +105,7 @@ class ImportHandlerTest extends TestCase
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -131,25 +134,17 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `label` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `label` is missing.'],
                             'expects' => 1,
                         ],
                     ],
-                    'dataProcessor' => [
-                        'expects' => 0,
-                        'item' => [
-                            'label' => '',
-                            'name' => '',
-                            'version' => '',
-                        ],
-                    ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -161,7 +156,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `label` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `label` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -178,25 +174,17 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `name` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `name` is missing.'],
                             'expects' => 1,
                         ],
                     ],
-                    'dataProcessor' => [
-                        'expects' => 0,
-                        'item' => [
-                            'label' => '',
-                            'name' => '',
-                            'version' => '',
-                        ],
-                    ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -208,7 +196,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `name` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `name` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -225,25 +214,17 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `version` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `version` is missing.'],
                             'expects' => 1,
                         ],
                     ],
-                    'dataProcessor' => [
-                        'expects' => 0,
-                        'item' => [
-                            'label' => '',
-                            'name' => '',
-                            'version' => '',
-                        ],
-                    ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -255,7 +236,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `version` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `version` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -273,25 +255,17 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Property `name` is invalid.',
+                        'getErrors' => [
+                            'result' => ['Property `name` is invalid.'],
                             'expects' => 1,
                         ],
                     ],
-                    'dataProcessor' => [
-                        'expects' => 0,
-                        'item' => [
-                            'label' => '',
-                            'name' => '',
-                            'version' => '',
-                        ],
-                    ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -305,7 +279,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Property `name` is invalid.). The item will not be imported.'
+                        'Item 0 is invalid (Property `name` is invalid.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -317,8 +292,8 @@ class ImportHandlerTest extends TestCase
                             'result' => true,
                             'expects' => 0,
                         ],
-                        'getError' => [
-                            'result' => null,
+                        'getErrors' => [
+                            'result' => [],
                             'expects' => 0,
                         ],
                     ],
@@ -335,7 +310,7 @@ class ImportHandlerTest extends TestCase
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 0,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -365,8 +340,8 @@ class ImportHandlerTest extends TestCase
                             'result' => true,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => null,
+                        'getErrors' => [
+                            'result' =>  [],
                             'expects' => 0,
                         ],
                     ],
@@ -383,7 +358,7 @@ class ImportHandlerTest extends TestCase
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -412,8 +387,8 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `label` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `label` is missing.'],
                             'expects' => 1,
                         ],
                     ],
@@ -426,11 +401,11 @@ class ImportHandlerTest extends TestCase
                         ],
                     ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -442,7 +417,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `label` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `label` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -459,8 +435,8 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `name` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `name` is missing.'],
                             'expects' => 1,
                         ],
                     ],
@@ -473,11 +449,11 @@ class ImportHandlerTest extends TestCase
                         ],
                     ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -489,7 +465,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `name` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `name` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -506,8 +483,8 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Required property `version` is missing.',
+                        'getErrors' => [
+                            'result' => ['Required property `version` is missing.'],
                             'expects' => 1,
                         ],
                     ],
@@ -520,11 +497,11 @@ class ImportHandlerTest extends TestCase
                         ],
                     ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [],
                         ],
@@ -536,7 +513,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Required property `version` is missing.). The item will not be imported.',
+                        'Item 0 is invalid (Required property `version` is missing.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -554,8 +532,8 @@ class ImportHandlerTest extends TestCase
                             'result' => false,
                             'expects' => 1,
                         ],
-                        'getError' => [
-                            'result' => 'Property `name` is invalid.',
+                        'getErrors' => [
+                            'result' => ['Property `name` is invalid.'],
                             'expects' => 1,
                         ],
                     ],
@@ -568,11 +546,11 @@ class ImportHandlerTest extends TestCase
                         ],
                     ],
                     'importer' => [
-                        'expects' => 0,
+                        'expects' => 1,
                     ],
                     'classService' => [
                         'class' => BrowserClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 1,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -586,7 +564,8 @@ class ImportHandlerTest extends TestCase
                 'expected' => [
                     'numberOfImportedItems' => 0,
                     'errors' => [
-                        'Item 0 is invalid (Property `name` is invalid.). The item will not be imported.'
+                        'Item 0 is invalid (Property `name` is invalid.).',
+                        'Item 0 will not be imported.',
                     ],
                 ],
             ],
@@ -598,8 +577,8 @@ class ImportHandlerTest extends TestCase
                             'result' => true,
                             'expects' => 0,
                         ],
-                        'getError' => [
-                            'result' => null,
+                        'getErrors' => [
+                            'result' => [],
                             'expects' => 0,
                         ],
                     ],
@@ -616,7 +595,7 @@ class ImportHandlerTest extends TestCase
                     ],
                     'classService' => [
                         'class' => OsClassService::class,
-                        'getNames' => [
+                        'getExistingNames' => [
                             'expects' => 0,
                             'result' => [
                                 $lowercaseValidName => 'Valid name',
@@ -649,48 +628,11 @@ class ImportHandlerTest extends TestCase
             ->method('isValid')
             ->willReturn($dataValidator['isValid']['result']);
         $dataValidatorMock
-            ->expects($this->exactly($dataValidator['getError']['expects']))
-            ->method('getError')
-            ->willReturn($dataValidator['getError']['result']);
+            ->expects($this->exactly($dataValidator['getErrors']['expects']))
+            ->method('getErrors')
+            ->willReturn($dataValidator['getErrors']['result']);
 
         return $dataValidatorMock;
-    }
-
-    /**
-     * @param array $dataProcessor
-     *
-     * @return MockObject
-     */
-    private function createDataProcessorMock(array $dataProcessor): MockObject
-    {
-        $dataProcessorMock = $this->createMock(DataProcessor::class);
-        $dataProcessorMock
-            ->expects($this->exactly($dataProcessor['expects']))
-            ->method('process')
-            ->willReturn($this->createClassDtoMock($dataProcessor['item']));
-
-        return $dataProcessorMock;
-    }
-
-    /**
-     * @param array $item
-     *
-     * @return MockObject
-     */
-    private function createClassDtoMock(array $item): MockObject
-    {
-        $classDtoMock = $this->createMock(ClassDTO::class);
-        $classDtoMock
-            ->method('getLabel')
-            ->willReturn($item['label']);
-        $classDtoMock
-            ->method('getName')
-            ->willReturn($item['name']);
-        $classDtoMock
-            ->method('getVersion')
-            ->willReturn($item['version']);
-
-        return $classDtoMock;
     }
 
     /**
@@ -717,9 +659,9 @@ class ImportHandlerTest extends TestCase
     {
         $classServiceMock = $this->createMock($classService['class']);
         $classServiceMock
-            ->expects($this->exactly($classService['getNames']['expects']))
-            ->method('getNames')
-            ->willReturn($classService['getNames']['result']);
+            ->expects($this->exactly($classService['getExistingNames']['expects']))
+            ->method('getExistingNames')
+            ->willReturn($classService['getExistingNames']['result']);
         $classServiceMock
             ->method('getNamePropertyUri')
             ->willReturn($classService['nameProperty']);

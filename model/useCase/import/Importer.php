@@ -37,9 +37,6 @@ class Importer extends ConfigurableService
     /** @var DetectorClassService */
     private $classService;
 
-    /** @var array */
-    private $classMap = [];
-
     /**
      * @param DetectorClassService $classService
      */
@@ -49,25 +46,26 @@ class Importer extends ConfigurableService
     }
 
     /**
-     * @param ClassDTO $dto
+     * @param array $items
      */
-    public function import(ClassDTO $dto): void
+    public function import(array $items): void
     {
-        $class = $this->createClassesStructure($dto->getClassMap());
-        $this->createInstance($class, $dto);
-    }
+        $structure = [];
 
-    public function resetClassMap(): void
-    {
-        $this->classMap = [];
+        /** @var ImportItemDTO $item */
+        foreach ($items as $item) {
+            $class = $this->createClassesStructure($item->getClassMap(), $structure);
+            $this->createInstance($class, $item);
+        }
     }
 
     /**
      * @param array $classMap
+     * @param array $structure
      *
      * @return core_kernel_classes_Class
      */
-    private function createClassesStructure(array $classMap): core_kernel_classes_Class
+    private function createClassesStructure(array $classMap, array &$structure): core_kernel_classes_Class
     {
         $class = $this->classService->getRootClass();
 
@@ -75,11 +73,11 @@ class Importer extends ConfigurableService
         foreach ($classMap as $label) {
             $lowercaseLabel = strtolower($label);
             /** @var string|bool $parentUri */
-            $parentUri = $this->classMap[$lowercaseLabel] ?? false;
+            $parentUri = $structure[$lowercaseLabel] ?? false;
 
             if ($parentUri === false) {
                 $class = $class->createSubClass($label);
-                $this->classMap[$lowercaseLabel] = $class->getUri();
+                $structure[$lowercaseLabel] = $class->getUri();
             } else {
                 $class = $this->classService->getClass($parentUri);
             }
@@ -90,11 +88,11 @@ class Importer extends ConfigurableService
 
     /**
      * @param core_kernel_classes_Class $class
-     * @param ClassDTO $dto
+     * @param ImportItemDTO $dto
      *
      * @return core_kernel_classes_Resource
      */
-    private function createInstance(core_kernel_classes_Class $class, ClassDTO $dto): core_kernel_classes_Resource
+    private function createInstance(core_kernel_classes_Class $class, ImportItemDTO $dto): core_kernel_classes_Resource
     {
         $instance = $class->createInstance($dto->getLabel());
         $instance->setPropertiesValues([

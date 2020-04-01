@@ -33,8 +33,8 @@ class OsClassService extends DetectorClassService
 {
     public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
     public const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';
-    public const PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
-    public const PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
+    public const OS_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
+    public const OS_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
 
     /**
      * Get the root class for Operating system
@@ -74,7 +74,7 @@ class OsClassService extends DetectorClassService
      */
     public function getNamePropertyUri(): string
     {
-        return self::PROPERTY_NAME;
+        return self::OS_NAME;
     }
 
     /**
@@ -92,7 +92,7 @@ class OsClassService extends DetectorClassService
      */
     public function getVersionPropertyUri(): string
     {
-        return self::PROPERTY_VERSION;
+        return self::OS_VERSION;
     }
 
     /**

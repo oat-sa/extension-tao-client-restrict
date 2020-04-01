@@ -38,8 +38,8 @@ class DataValidator extends ConfigurableService
         'version',
     ];
 
-    /** @var string|null */
-    private $error;
+    /** @var array */
+    private $errors;
 
     /**
      * @param array $item
@@ -49,53 +49,42 @@ class DataValidator extends ConfigurableService
      */
     public function isValid(array $item, array $names): bool
     {
-        if ($this->checkRequiredFields($item) === false || $this->nameExists($item, $names) === false) {
-            return false;
-        }
+        $this->errors = [];
 
-        return true;
+        $this->checkRequiredFields($item);
+        $this->checkIfNameExists($item, $names);
+
+        return empty($this->errors);
     }
 
     /**
-     * @return string|null
+     * @return array
      */
-    public function getError(): ?string
+    public function getErrors(): array
     {
-        return $this->error;
+        return $this->errors;
     }
 
     /**
      * @param array $item
-     *
-     * @return bool
      */
-    private function checkRequiredFields(array $item): bool
+    private function checkRequiredFields(array $item): void
     {
         foreach ($this->requiredFields as $field) {
             if (array_key_exists($field, $item) === false) {
-                $this->error = sprintf('Required property `%s` is missing.', $field);
-
-                return false;
+                $this->errors[] = sprintf('Required property `%s` is missing.', $field);
             }
         }
-
-        return true;
     }
 
     /**
      * @param array $item
      * @param array $names
-     *
-     * @return bool
      */
-    private function nameExists(array $item, array $names): bool
+    private function checkIfNameExists(array $item, array $names): void
     {
-        $isValid = array_key_exists(strtolower($item['name']), $names);
-
-        if ($isValid === false) {
-            $this->error = 'Property `name` is invalid.';
+        if (isset($item['name'], $names[strtolower($item['name'])]) === false) {
+            $this->errors[] = 'Property `name` is invalid.';
         }
-
-        return $isValid;
     }
 }

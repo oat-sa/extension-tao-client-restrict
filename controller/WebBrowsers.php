@@ -38,8 +38,8 @@ class WebBrowsers extends \tao_actions_SaSModule
         $myFormContainer = new \tao_actions_form_Instance($clazz, $instance);
 
         $myForm = $myFormContainer->getForm();
-        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::PROPERTY_NAME));
-        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::PROPERTY_VERSION));
+        $nameElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::BROWSER_NAME));
+        $versionElement = $myForm->getElement(\tao_helpers_Uri::encode(BrowserClassService::BROWSER_VERSION));
         $nameElement->addClass('select2');
         $versionElement->setHelp(
             "<span class=\"icon-help tooltipstered\" data-tooltip=\".web-browser-form .browser-version-tooltip-content\" data-tooltip-theme=\"info\"></span>"
