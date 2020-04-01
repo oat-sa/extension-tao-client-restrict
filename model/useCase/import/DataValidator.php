@@ -71,7 +71,7 @@ class DataValidator extends ConfigurableService
     private function checkRequiredFields(array $item): void
     {
         foreach ($this->requiredFields as $field) {
-            if (array_key_exists($field, $item) === false) {
+            if (isset($item[$field]) === false) {
                 $this->errors[] = sprintf('Required property `%s` is missing.', $field);
             }
         }
@@ -83,7 +83,7 @@ class DataValidator extends ConfigurableService
      */
     private function checkIfNameExists(array $item, array $names): void
     {
-        if (isset($item['name'], $names[strtolower($item['name'])]) === false) {
+        if (isset($item['name']) === false || array_key_exists(strtolower($item['name']), $names) === false) {
             $this->errors[] = 'Property `name` is invalid.';
         }
     }
