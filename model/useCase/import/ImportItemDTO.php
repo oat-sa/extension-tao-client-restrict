@@ -44,14 +44,17 @@ class ImportItemDTO
     /**
      * ImportItemDTO constructor.
      *
-     * @param array $properties
+     * @param string $label
+     * @param string $name
+     * @param string $version
+     * @param array $classMap
      */
-    public function __construct(array $properties)
+    public function __construct(string $label, string $name, string $version, array $classMap = [])
     {
-        $this->classMap = $properties['classMap'] ?? [];
-        $this->label = $properties['label'];
-        $this->name = $properties['name'];
-        $this->version = $properties['version'];
+        $this->label = $label;
+        $this->name = $name;
+        $this->version = $version;
+        $this->classMap = $classMap;
     }
 
     /**
@@ -59,9 +62,14 @@ class ImportItemDTO
      *
      * @return static
      */
-    public static function create(array $properties): self
+    public static function createFromArray(array $properties): self
     {
-        return new self($properties);
+        return new self(
+            $properties['label'],
+            $properties['name'],
+            $properties['version'],
+            $properties['classMap'] ?? []
+        );
     }
 
     /**

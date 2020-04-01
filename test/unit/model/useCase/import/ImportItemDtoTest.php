@@ -40,7 +40,7 @@ class ImportItemDtoTest extends TestCase
      */
     public function testClassDto(array $data, array $expected): void
     {
-        $classDto = ImportItemDTO::create($data);
+        $classDto = ImportItemDTO::createFromArray($data);
 
         $this->assertEquals($expected['classMap'], $classDto->getClassMap());
         $this->assertEquals($expected['label'], $classDto->getLabel());

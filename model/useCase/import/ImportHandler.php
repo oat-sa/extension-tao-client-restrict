@@ -62,7 +62,7 @@ class ImportHandler extends ConfigurableService
                 }
 
                 $item['name'] = $names[strtolower($item['name'])] ?? $item['name'];
-                $itemsToImport[] = ImportItemDTO::create($item);
+                $itemsToImport[] = ImportItemDTO::createFromArray($item);
             }
 
             $importer->import($itemsToImport);

@@ -107,6 +107,8 @@ class ImportScript extends ScriptAction
             foreach ($errors as $error) {
                 $report->add(Report::createFailure($error));
             }
+
+            $report->add(Report::createSuccess(sprintf('Import successfully finished! (%s)', $serviceClass)));
         } catch (\Throwable $exception) {
             $report = Report::createFailure(sprintf('Cannot import data (%s).', $exception->getMessage()));
         }
