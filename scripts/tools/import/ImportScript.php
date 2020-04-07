@@ -22,9 +22,12 @@ declare(strict_types=1);
 
 namespace oat\taoClientRestrict\scripts\tools\import;
 
+use common_Exception;
 use common_report_Report as Report;
 use oat\oatbox\extension\script\ScriptAction;
-use oat\taoClientRestrict\model\useCase\import\ImportHandler;
+use oat\taoClientRestrict\model\detection\OsClassService;
+use oat\taoClientRestrict\model\useCase\import\ImportClientRestrictionsHandler;
+use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
@@ -34,6 +37,9 @@ use oat\taoClientRestrict\model\detection\DetectorClassService;
  */
 class ImportScript extends ScriptAction
 {
+    private const TYPE_BROWSER = 'browser';
+    private const TYPE_OS = 'os';
+
     /**
      * @example --list - An array of approved browsers/OS
      *     [
@@ -52,10 +58,10 @@ class ImportScript extends ScriptAction
      * @example name - Browser/OS name (Required)
      * @example version - Browser/OS version (Required)
      *
-     * @example --service - Class service which will be used for import.
-     *     List of available managers:
-     *         - oat\taoClientRestrict\model\detection\BrowserClassService
-     *         - oat\taoClientRestrict\model\detection\OsClassService
+     * @example --type - type to defined service which will be used for import.
+     *     List of available types:
+     *         - browser
+     *         - os
      *
      * @return array
      */
@@ -69,11 +75,11 @@ class ImportScript extends ScriptAction
                 'description' => 'List of authorized browsers/OS. Should be represented as an json array of browsers/OS.',
                 'defaultValue' => [],
             ],
-            'service' => [
-                'prefix' => 's',
-                'longPrefix' => 'service',
+            'type' => [
+                'prefix' => 't',
+                'longPrefix' => 'type',
                 'required' => true,
-                'description' => 'Class service which will be used for import (string).',
+                'description' => 'Type to define service which will be used for import (string).',
             ],
         ];
     }
@@ -92,27 +98,41 @@ class ImportScript extends ScriptAction
     protected function run()
     {
         try {
-            $serviceClass = $this->getOption('service');
-            $report = Report::createInfo(sprintf('Importing... (%s)', $serviceClass));
+            $type = $this->getOption('type');
+            $report = Report::createInfo(sprintf('Importing... (Type: %s)', $type));
     
-            $serviceLocator = $this->getServiceLocator();
-
-            /** @var DetectorClassService $classService */
-            $classService = $serviceLocator->get($serviceClass);
-            /** @var ImportHandler $handler */
-            $handler = $serviceLocator->get(ImportHandler::class);
-
-            $errors = $handler->handle($this->getOption('list'), $classService);
+            /** @var ImportClientRestrictionsHandler $handler */
+            $handler = $this->getServiceLocator()->get(ImportClientRestrictionsHandler::class);
+            $errors = $handler->handle($this->getOption('list'), $this->defineService($type));
 
             foreach ($errors as $error) {
                 $report->add(Report::createFailure($error));
             }
 
-            $report->add(Report::createSuccess(sprintf('Import successfully finished! (%s)', $serviceClass)));
+            $report->add(Report::createSuccess(sprintf('Import successfully finished! (Type: %s)', $type)));
         } catch (\Throwable $exception) {
             $report = Report::createFailure(sprintf('Cannot import data (%s).', $exception->getMessage()));
         }
 
         return $report;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @throws common_Exception
+     *
+     * @return DetectorClassService
+     */
+    private function defineService(string $type): DetectorClassService
+    {
+        switch (strtolower($type)) {
+            case self::TYPE_BROWSER:
+                return $this->getServiceLocator()->get(BrowserClassService::class);
+            case self::TYPE_OS:
+                return $this->getServiceLocator()->get(OsClassService::class);
+            default:
+                throw new common_Exception('Cannot define service. Type is not valid.');
+        }
     }
 }

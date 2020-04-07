@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
-use oat\taoClientRestrict\model\useCase\import\ImportItemDTO;
+use oat\taoClientRestrict\model\useCase\import\ClientRestrictionDTO;
 use oat\taoClientRestrict\model\useCase\import\DataValidator;
 
 /**

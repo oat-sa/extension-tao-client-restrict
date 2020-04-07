@@ -23,11 +23,11 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\model\useCase\import;
 
 /**
- * Class ImportItemDTO
+ * Class ClientRestrictionDTO
  *
  * @package oat\taoClientRestrict\model\useCase\import
  */
-class ImportItemDTO
+class ClientRestrictionDTO
 {
     /** @var array */
     private $classMap;
@@ -42,7 +42,7 @@ class ImportItemDTO
     private $version;
 
     /**
-     * ImportItemDTO constructor.
+     * ClientRestrictionDTO constructor.
      *
      * @param string $label
      * @param string $name

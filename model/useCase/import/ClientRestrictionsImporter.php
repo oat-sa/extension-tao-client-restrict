@@ -24,15 +24,16 @@ namespace oat\taoClientRestrict\model\useCase\import;
 
 use core_kernel_classes_Class;
 use core_kernel_classes_Resource;
+use oat\generis\model\OntologyRdfs;
 use oat\oatbox\service\ConfigurableService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
- * Class Importer
+ * Class ClientRestrictionsImporter
  *
  * @package oat\taoClientRestrict\model\useCase\import
  */
-class Importer extends ConfigurableService
+class ClientRestrictionsImporter extends ConfigurableService
 {
     /** @var DetectorClassService */
     private $classService;
@@ -52,7 +53,7 @@ class Importer extends ConfigurableService
     {
         $structure = [];
 
-        /** @var ImportItemDTO $item */
+        /** @var ClientRestrictionDTO $item */
         foreach ($items as $item) {
             $class = $this->createClassesStructure($item->getClassMap(), $structure);
             $this->createInstance($class, $item);
@@ -88,18 +89,18 @@ class Importer extends ConfigurableService
 
     /**
      * @param core_kernel_classes_Class $class
-     * @param ImportItemDTO $dto
+     * @param ClientRestrictionDTO $dto
      *
      * @return core_kernel_classes_Resource
      */
-    private function createInstance(core_kernel_classes_Class $class, ImportItemDTO $dto): core_kernel_classes_Resource
-    {
-        $instance = $class->createInstance($dto->getLabel());
-        $instance->setPropertiesValues([
+    private function createInstance(
+        core_kernel_classes_Class $class,
+        ClientRestrictionDTO $dto
+    ): core_kernel_classes_Resource {
+        return $class->createInstanceWithProperties([
+            OntologyRdfs::RDFS_LABEL => $dto->getLabel(),
             $this->classService->getNamePropertyUri() => $dto->getName(),
             $this->classService->getVersionPropertyUri() => $dto->getVersion(),
         ]);
-
-        return $instance;
     }
 }

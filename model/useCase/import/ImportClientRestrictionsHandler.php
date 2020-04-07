@@ -26,11 +26,11 @@ use oat\oatbox\service\ConfigurableService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
- * Class ImportHandler
+ * Class ImportClientRestrictionsHandler
  *
  * @package oat\taoClientRestrict\model\useCase\import
  */
-class ImportHandler extends ConfigurableService
+class ImportClientRestrictionsHandler extends ConfigurableService
 {
     /** @var DataValidator */
     private $validator;
@@ -62,7 +62,7 @@ class ImportHandler extends ConfigurableService
                 }
 
                 $item['name'] = $names[strtolower($item['name'])] ?? $item['name'];
-                $itemsToImport[] = ImportItemDTO::createFromArray($item);
+                $itemsToImport[] = ClientRestrictionDTO::createFromArray($item);
             }
 
             $importer->import($itemsToImport);
@@ -86,12 +86,12 @@ class ImportHandler extends ConfigurableService
     /**
      * @param DetectorClassService $classService
      *
-     * @return Importer
+     * @return ClientRestrictionsImporter
      */
-    private function getImporter(DetectorClassService $classService): Importer
+    private function getImporter(DetectorClassService $classService): ClientRestrictionsImporter
     {
-        /** @var Importer $importer */
-        $importer = $this->getServiceLocator()->get(Importer::class);
+        /** @var ClientRestrictionsImporter $importer */
+        $importer = $this->getServiceLocator()->get(ClientRestrictionsImporter::class);
         $importer->setClassService($classService);
 
         return $importer;

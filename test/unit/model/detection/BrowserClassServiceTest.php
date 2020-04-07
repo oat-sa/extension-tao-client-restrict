@@ -63,7 +63,7 @@ class BrowserClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
-            ->with(BrowserClassService::MAKE_CLASS)
+            ->with(BrowserClassService::BROWSER_MAKE)
             ->willReturn($class);
 
         $detector = $this->getMockBuilder(Browser::class)

@@ -62,7 +62,7 @@ class OsClassServiceTest extends TestCase
         $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
         $model->expects($this->once())
             ->method('getClass')
-            ->with(OsClassService::MAKE_CLASS)
+            ->with(OsClassService::OS_MAKE)
             ->willReturn($class);
 
         $detector = $this->getMockBuilder(Os::class)

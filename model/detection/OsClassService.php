@@ -32,7 +32,7 @@ use core_kernel_classes_Property;
 class OsClassService extends DetectorClassService
 {
     public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
-    public const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';
+    public const OS_MAKE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';
     public const OS_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
     public const OS_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
 
@@ -102,6 +102,6 @@ class OsClassService extends DetectorClassService
      */
     protected function getMakeClass()
     {
-        return $this->getClass(self::MAKE_CLASS);
+        return $this->getClass(self::OS_MAKE);
     }
 }

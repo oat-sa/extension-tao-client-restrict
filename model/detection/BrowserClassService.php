@@ -32,7 +32,7 @@ use Sinergi\BrowserDetector\Browser;
 class BrowserClassService extends DetectorClassService
 {
     public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
-    public const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserMake';
+    public const BROWSER_MAKE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserMake';
     public const BROWSER_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
     public const BROWSER_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
 
@@ -102,6 +102,6 @@ class BrowserClassService extends DetectorClassService
      */
     protected function getMakeClass()
     {
-        return $this->getClass(self::MAKE_CLASS);
+        return $this->getClass(self::BROWSER_MAKE);
     }
 }

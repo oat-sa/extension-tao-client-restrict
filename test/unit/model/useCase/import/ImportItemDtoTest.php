@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
-use oat\taoClientRestrict\model\useCase\import\ImportItemDTO;
+use oat\taoClientRestrict\model\useCase\import\ClientRestrictionDTO;
 
 /**
  * Class ImportItemDtoTest
@@ -40,7 +40,7 @@ class ImportItemDtoTest extends TestCase
      */
     public function testClassDto(array $data, array $expected): void
     {
-        $classDto = ImportItemDTO::createFromArray($data);
+        $classDto = ClientRestrictionDTO::createFromArray($data);
 
         $this->assertEquals($expected['classMap'], $classDto->getClassMap());
         $this->assertEquals($expected['label'], $classDto->getLabel());

@@ -24,12 +24,12 @@ namespace oat\taoClientRestrict\test\unit\useCase\import;
 
 use oat\generis\test\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use oat\taoClientRestrict\model\useCase\import\Importer;
 use oat\taoClientRestrict\model\detection\OsClassService;
-use oat\taoClientRestrict\model\useCase\import\ImportHandler;
+use oat\taoClientRestrict\model\useCase\import\ImportClientRestrictionsHandler;
 use oat\taoClientRestrict\model\useCase\import\DataValidator;
 use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
+use oat\taoClientRestrict\model\useCase\import\ClientRestrictionsImporter;
 
 /**
  * Class ImportHandlerTest
@@ -59,13 +59,13 @@ class ImportHandlerTest extends TestCase
 
         $serviceLocatorMock = $this->getServiceLocatorMock([
             DataValidator::class => $dataValidatorMock,
-            Importer::class => $importerMock,
+            ClientRestrictionsImporter::class => $importerMock,
         ]);
 
         /** @var DetectorClassService|MockObject $classServiceMock */
         $classServiceMock = $this->createClassServiceMock($data['classService']);
 
-        $importHandler = new ImportHandler();
+        $importHandler = new ImportClientRestrictionsHandler();
         $importHandler->setServiceLocator($serviceLocatorMock);
         $errors = $importHandler->handle($data['data'], $classServiceMock);
 
@@ -642,7 +642,7 @@ class ImportHandlerTest extends TestCase
      */
     private function createImporterMock(array $importer): MockObject
     {
-        $importerMock = $this->createMock(Importer::class);
+        $importerMock = $this->createMock(ClientRestrictionsImporter::class);
         $importerMock
             ->expects($this->exactly($importer['expects']))
             ->method('import');
