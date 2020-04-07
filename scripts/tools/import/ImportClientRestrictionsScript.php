@@ -31,11 +31,11 @@ use oat\taoClientRestrict\model\detection\BrowserClassService;
 use oat\taoClientRestrict\model\detection\DetectorClassService;
 
 /**
- * Class ImportScript
+ * Class ImportClientRestrictionsScript
  *
  * @package oat\taoClientRestrict\scripts\tools\import
  */
-class ImportScript extends ScriptAction
+class ImportClientRestrictionsScript extends ScriptAction
 {
     private const TYPE_BROWSER = 'browser';
     private const TYPE_OS = 'os';
