@@ -20,38 +20,39 @@
 
 namespace oat\taoClientRestrict\test\unit\detection;
 
-use oat\generis\model\data\Model;
+use core_kernel_classes_Class;
 use oat\generis\model\OntologyRdfs;
 use oat\generis\test\TestCase;
 use oat\taoClientRestrict\model\detection\BrowserClassService;
 use ReflectionClass;
+use ReflectionException;
 use Sinergi\BrowserDetector\Browser;
 use \oat\generis\model\data\Ontology;
 
 class BrowserClassServiceTest extends TestCase
 {
-    public function testGetRootClass()
+    public function testGetRootClass(): void
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getClass')
             ->with(BrowserClassService::ROOT_CLASS)
             ->willReturn('fixture');
 
-        $service = BrowserClassService::singleton();
+        $service = new BrowserClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getRootClass());
     }
 
-    public function testGetMakeClass()
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetMakeClass(): void
     {
         $detectedName = 'fixture-os-name';
         $resource = 'fixture-resource';
 
-        $class = $this->getMockBuilder(\core_kernel_classes_Class::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['searchInstances'])
-            ->getMock();
+        $class = $this->createMock(core_kernel_classes_Class::class);
         $class->expects($this->once())
             ->method('searchInstances')
             ->with(
@@ -60,21 +61,18 @@ class BrowserClassServiceTest extends TestCase
             )
             ->willReturn([$resource]);
 
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getClass')
             ->with(BrowserClassService::BROWSER_MAKE)
             ->willReturn($class);
 
-        $detector = $this->getMockBuilder(Browser::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getName'])
-            ->getMock();
+        $detector = $this->createMock(Browser::class);
         $detector->expects($this->once())
             ->method('getName')
             ->willReturn($detectedName);
 
-        $service = BrowserClassService::singleton();
+        $service = new BrowserClassService();
         $reflection = new ReflectionClass($service);
         $reflection_property = $reflection->getProperty('detector');
         $reflection_property->setAccessible(true);
@@ -84,28 +82,28 @@ class BrowserClassServiceTest extends TestCase
         $this->assertEquals($resource, $service->getClientNameResource());
     }
 
-    public function testGetNameProperty()
+    public function testGetNameProperty(): void
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(BrowserClassService::BROWSER_NAME)
             ->willReturn('fixture');
 
-        $service = BrowserClassService::singleton();
+        $service = new BrowserClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getNameProperty());
     }
 
     public function testGetVersionProperty()
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getProperty')
             ->with(BrowserClassService::BROWSER_VERSION)
             ->willReturn('fixture');
 
-        $service = BrowserClassService::singleton();
+        $service = new BrowserClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getVersionProperty());
     }
