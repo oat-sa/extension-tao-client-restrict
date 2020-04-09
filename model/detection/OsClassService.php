@@ -20,26 +20,26 @@
 
 namespace oat\taoClientRestrict\model\detection;
 
+use core_kernel_classes_Class;
 use Sinergi\BrowserDetector\Os;
+use core_kernel_classes_Property;
 
-/**
+/*
  * Class OsClassService
- *
- * Service to manage detected OS
  *
  * @package oat\taoClientRestrict\model\detection
  */
 class OsClassService extends DetectorClassService
 {
-    const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
-    const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';
-    const PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
-    const PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
+    public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OS';
+    public const OS_MAKE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSMake';
+    public const OS_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSName';
+    public const OS_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#OSVersion';
 
     /**
      * Get the root class for Operating system
      *
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      */
     public function getRootClass()
     {
@@ -62,31 +62,46 @@ class OsClassService extends DetectorClassService
     /**
      * Get the name property of detected OS
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     public function getNameProperty()
     {
-        return $this->getProperty(self::PROPERTY_NAME);
+        return $this->getProperty($this->getNamePropertyUri());
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamePropertyUri(): string
+    {
+        return self::OS_NAME;
     }
 
     /**
      * Get the version property of detected OS
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     public function getVersionProperty()
     {
-        return $this->getProperty(self::PROPERTY_VERSION);
+        return $this->getProperty($this->getVersionPropertyUri());
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersionPropertyUri(): string
+    {
+        return self::OS_VERSION;
     }
 
     /**
      * Get the parent class of detectable OS
      *
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      */
     protected function getMakeClass()
     {
-        return $this->getClass(self::MAKE_CLASS);
+        return $this->getClass(self::OS_MAKE);
     }
-
 }

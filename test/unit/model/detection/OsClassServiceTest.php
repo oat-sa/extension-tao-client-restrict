@@ -20,37 +20,39 @@
 
 namespace oat\taoClientRestrict\test\unit\detection;
 
-use oat\generis\model\data\Model;
+use core_kernel_classes_Class;
 use oat\generis\model\OntologyRdfs;
 use oat\generis\test\TestCase;
 use oat\taoClientRestrict\model\detection\OsClassService;
 use ReflectionClass;
+use ReflectionException;
 use Sinergi\BrowserDetector\Os;
 use \oat\generis\model\data\Ontology;
+
 class OsClassServiceTest extends TestCase
 {
-    public function testGetRootClass()
+    public function testGetRootClass(): void
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getClass')
             ->with(OsClassService::ROOT_CLASS)
             ->willReturn('fixture');
 
-        $service = OsClassService::singleton();
+        $service = new OsClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getRootClass());
     }
 
-    public function testGetMakeClass()
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetMakeClass(): void
     {
         $detectedName = 'fixture-os-name';
         $resource = 'fixture-resource';
 
-        $class = $this->getMockBuilder(\core_kernel_classes_Class::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['searchInstances'])
-            ->getMock();
+        $class = $this->createMock(core_kernel_classes_Class::class);
         $class->expects($this->once())
             ->method('searchInstances')
             ->with(
@@ -59,21 +61,18 @@ class OsClassServiceTest extends TestCase
             )
             ->willReturn([$resource]);
 
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getClass']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getClass')
-            ->with(OsClassService::MAKE_CLASS)
+            ->with(OsClassService::OS_MAKE)
             ->willReturn($class);
 
-        $detector = $this->getMockBuilder(Os::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getName'])
-            ->getMock();
+        $detector = $this->createMock(Os::class);
         $detector->expects($this->once())
             ->method('getName')
             ->willReturn($detectedName);
 
-        $service = OsClassService::singleton();
+        $service = new OsClassService();
         $reflection = new ReflectionClass($service);
         $reflection_property = $reflection->getProperty('detector');
         $reflection_property->setAccessible(true);
@@ -83,28 +82,28 @@ class OsClassServiceTest extends TestCase
         $this->assertEquals($resource, $service->getClientNameResource());
     }
 
-    public function testGetNameProperty()
+    public function testGetNameProperty(): void
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(OsClassService::PROPERTY_NAME)
+            ->with(OsClassService::OS_NAME)
             ->willReturn('fixture');
 
-        $service = OsClassService::singleton();
+        $service = new OsClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getNameProperty());
     }
 
-    public function testGetVersionProperty()
+    public function testGetVersionProperty(): void
     {
-        $model = $this->getMockForAbstractClass(Ontology::class, [], '', false, true, true, ['getProperty']);
+        $model = $this->createMock(Ontology::class);
         $model->expects($this->once())
             ->method('getProperty')
-            ->with(OsClassService::PROPERTY_VERSION)
+            ->with(OsClassService::OS_VERSION)
             ->willReturn('fixture');
 
-        $service = OsClassService::singleton();
+        $service = new OsClassService();
         $service->setModel($model);
         $this->assertEquals('fixture', $service->getVersionProperty());
     }
