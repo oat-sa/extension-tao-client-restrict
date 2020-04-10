@@ -20,19 +20,26 @@
 
 namespace oat\taoClientRestrict\model\detection;
 
+use core_kernel_classes_Class;
+use core_kernel_classes_Property;
 use Sinergi\BrowserDetector\Browser;
 
+/**
+ * Class BrowserClassService
+ *
+ * @package oat\taoClientRestrict\model\detection
+ */
 class BrowserClassService extends DetectorClassService
 {
-    const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
-    const MAKE_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserMake';
-    const PROPERTY_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
-    const PROPERTY_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
+    public const ROOT_CLASS = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#WebBrowser';
+    public const BROWSER_MAKE = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserMake';
+    public const BROWSER_NAME = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserName';
+    public const BROWSER_VERSION = 'http://www.tao.lu/Ontologies/TAODelivery.rdf#BrowserVersion';
 
     /**
      * Get the root class for Web Browser
      *
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      */
     public function getRootClass()
     {
@@ -55,31 +62,46 @@ class BrowserClassService extends DetectorClassService
     /**
      * Get the name property of detected Browser
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     public function getNameProperty()
     {
-        return $this->getProperty(self::PROPERTY_NAME);
+        return $this->getProperty($this->getNamePropertyUri());
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamePropertyUri(): string
+    {
+        return self::BROWSER_NAME;
     }
 
     /**
      * Get the version property of detected Browser
      *
-     * @return \core_kernel_classes_Property
+     * @return core_kernel_classes_Property
      */
     public function getVersionProperty()
     {
-        return $this->getProperty(self::PROPERTY_VERSION);
+        return $this->getProperty($this->getVersionPropertyUri());
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersionPropertyUri(): string
+    {
+        return self::BROWSER_VERSION;
     }
 
     /**
      * Get the parent class of detectable Browser
      *
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      */
     protected function getMakeClass()
     {
-        return $this->getClass(self::MAKE_CLASS);
+        return $this->getClass(self::BROWSER_MAKE);
     }
-
 }

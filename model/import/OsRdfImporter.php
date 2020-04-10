@@ -31,8 +31,8 @@ class OsRdfImporter extends AbstractRdfImporter {
     protected function getMandatoryProperties()
     {
         return [
-            OsClassService::PROPERTY_NAME,
-            OsClassService::PROPERTY_VERSION,
+            OsClassService::OS_NAME,
+            OsClassService::OS_VERSION,
         ];
     }
 
