@@ -1,0 +1,121 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 3.3.0-sprint104\n"
+"PO-Revision-Date: 2019-07-05T09:09:33\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: en-US\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#, tao-public
+msgid "Add"
+msgstr "追加"
+
+#, tao-public
+msgid "Browser Lists"
+msgstr "ブラウザリスト"
+
+msgid "Checking the browser version..."
+msgstr "ブラウザバージョン確認中..."
+
+msgid "Checking the os version..."
+msgstr "OSバージョン確認中..."
+
+msgid "Compatible"
+msgstr "互換性"
+
+msgid "Data imported successfully"
+msgstr "データのインポートが完了しました"
+
+#, tao-public
+msgid "Delete"
+msgstr "削除"
+
+msgid "Edit Authorized Operation System"
+msgstr "承認されたオペレーションシステムの変更"
+
+msgid "Edit Authorized Web Browser"
+msgstr "承認されたブラウザの変更"
+
+#, tao-public
+msgid "Export"
+msgstr "エクスポート"
+
+#, tao-public
+msgid "Import"
+msgstr "インポート"
+
+msgid "Instance saved"
+msgstr "インスタンスが保存されました"
+
+msgid "Issue"
+msgstr "課題"
+
+#, tao-public
+msgid "New Class"
+msgstr "新規クラス"
+
+msgid "Not Compatible"
+msgstr "非対応"
+
+msgid "Operating system version"
+msgstr "OSバージョン"
+
+#, tao-public
+msgid "OS Lists"
+msgstr "OSリスト"
+
+msgid "Pass – Your browser is approved"
+msgstr "承認ーあなたのブラウザは承認済みです"
+
+msgid "Pass – Your Operating System is approved"
+msgstr "承認ーあなたのOSは承認済みです"
+
+#, tao-public
+msgid "Properties"
+msgstr "プロパティ"
+
+msgid "Resource not imported due to multiple super classes"
+msgstr "複数のスーパークラスがあるためリソースはインポートされません"
+
+msgid "Resource not imported due to multiple types"
+msgstr "複数のタイプがあるためリソースはインポートされません"
+
+msgid "Return"
+msgstr "リターン"
+
+#, tao-public
+msgid "Settings"
+msgstr "設定"
+
+msgid "Successfully imported \"%s"
+msgstr "インポートが完了しました：\"%s"
+
+msgid "Successfully imported class \"%s"
+msgstr "クラスのインポートが完了しました： \"%s"
+
+msgid "The system is unable to start this assessment because you are attempting to launch it using an unsupported browser or operating system.  Please contact your proctor or support for assistance"
+msgstr "サポートされていないブラウザまたはOSを使用してテストを開始しようとしているため、システムはテストを開始できません。 試検監督者またはサポートに連絡してください。"
+
+msgid "Web browser version"
+msgstr "ブラウザのバージョン"
+
+#, tao-public
+msgid "Web Browsers Lists"
+msgstr "ブラウザのリスト"
+
+msgid "You are prevented from launching an assessment."
+msgstr "テストを開始することができませんでした"
+
+msgid "You should only import OS List data"
+msgstr "OSのリストデータのみ取り込むことができます"
+
+msgid "You should only import Web Browser List data"
+msgstr "ブラウザのリストデータのみ取り込むことができます"
+
