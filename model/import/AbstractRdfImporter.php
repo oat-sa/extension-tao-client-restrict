@@ -20,24 +20,26 @@
 
 namespace oat\taoClientRestrict\model\import;
 
-
+use EasyRdf\Format;
+use EasyRdf\Graph;
 use oat\generis\model\OntologyRdf;
 use oat\generis\model\OntologyRdfs;
+use oat\oatbox\reporting\Report;
 
-abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporter {
-
-
+abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporter
+{
     /**
      * Imports the rdf file into the selected class
      *
-     * @param string $content
+     * @param string                     $content
      * @param \core_kernel_classes_Class $class
-     * @return \common_report_Report
+     *
+     * @throws \EasyRdf\Exception|\common_exception_Error
      */
-    protected function flatImport($content, \core_kernel_classes_Class $class)
+    protected function flatImport($content, \core_kernel_classes_Class $class): Report
     {
-        $report = \common_report_Report::createSuccess(__('Data imported successfully'));
-        $graph = new \EasyRdf_Graph();
+        $report = Report::createSuccess(__('Data imported successfully'));
+        $graph = new Graph();
         $graph->parse($content);
 
         $correctClass = true;
@@ -50,9 +52,9 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
 
         if($correctClass){
             // keep type property
-            $map = array(
+            $map = [
                 OntologyRdf::RDF_PROPERTY => OntologyRdf::RDF_PROPERTY
-            );
+            ];
 
             foreach ($graph->resources() as $resource) {
                 if($class->getUri() !== $resource->getUri()){
@@ -60,7 +62,7 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
                 }
             }
 
-            $format = \EasyRdf_Format::getFormat('php');
+            $format = Format::getFormat('php');
             $data = $graph->serialise($format);
 
             foreach ($data as $subjectUri => $propertiesValues){
@@ -73,8 +75,9 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
                 }
             }
         } else {
-            $report = \common_report_Report::createFailure($this->getErrorMessage());
+            $report = Report::createError($this->getErrorMessage());
         }
+
         return $report;
     }
 
@@ -82,27 +85,30 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
      * Import the properties of the resource
      *
      * @param \core_kernel_classes_Resource $resource
-     * @param array $propertiesValues
-     * @param array $map
-     * @param \core_kernel_classes_Class $class
+     * @param array                         $propertiesValues
+     * @param array                         $map
+     * @param \core_kernel_classes_Class    $class
+     *
      * @return \common_report_Report
+     * @throws \common_exception_Error
      */
     protected function importProperties(\core_kernel_classes_Resource $resource, $propertiesValues, $map, $class) {
         if (isset($propertiesValues[OntologyRdf::RDF_TYPE])) {
             // assuming single Type
             if (count($propertiesValues[OntologyRdf::RDF_TYPE]) > 1) {
-                return new \common_report_Report(\common_report_Report::TYPE_ERROR, __('Resource not imported due to multiple types'));
-            } else {
-                foreach ($propertiesValues[OntologyRdf::RDF_TYPE] as $k => $v) {
-                    if($v['value'] === OntologyRdf::RDF_PROPERTY){
-                        return null;
-                    }
-                    $classType = isset($map[$v['value']])
-                        ? new \core_kernel_classes_Class($map[$v['value']])
-                        : $class;
-                        $classType->createInstance(null, null, $resource->getUri());
-                }
+                return Report::createError(__('Resource not imported due to multiple types'));
             }
+
+            foreach ($propertiesValues[OntologyRdf::RDF_TYPE] as $v) {
+                if($v['value'] === OntologyRdf::RDF_PROPERTY){
+                    return null;
+                }
+                $classType = isset($map[$v['value']])
+                    ? new \core_kernel_classes_Class($map[$v['value']])
+                    : $class;
+                    $classType->createInstance(null, null, $resource->getUri());
+            }
+
             unset($propertiesValues[OntologyRdf::RDF_TYPE]);
         }
 
@@ -110,7 +116,7 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
             $resource = new \core_kernel_classes_Class($resource);
             // assuming single subclass
             if (isset($propertiesValues[OntologyRdf::RDF_TYPE]) && count($propertiesValues[OntologyRdf::RDF_TYPE]) > 1) {
-                return new \common_report_Report(\common_report_Report::TYPE_ERROR, __('Resource not imported due to multiple super classes'));
+                return Report::createError(__('Resource not imported due to multiple super classes'));
             }
             foreach ($propertiesValues[OntologyRdfs::RDFS_SUBCLASSOF] as $k => $v) {
                 $classSup = isset($map[$v['value']])
@@ -124,7 +130,7 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
 
         foreach ($propertiesValues as $prop=>$values){
             $property = new \core_kernel_classes_Property($prop);
-            foreach ($values as $k => $v) {
+            foreach ($values as $v) {
                 $value = $v['value'];
                 if (isset($v['lang'])) {
                     $resource->setPropertyValueByLg($property, $value, $v['lang']);
@@ -137,7 +143,7 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
             ? __('Successfully imported class "%s"', $resource->getLabel())
             : __('Successfully imported "%s"', $resource->getLabel());
 
-        return new \common_report_Report(\common_report_Report::TYPE_SUCCESS, $msg, $resource);
+        return Report::createSuccess($msg, $resource);
     }
 
     /**
@@ -151,6 +157,4 @@ abstract class AbstractRdfImporter extends \tao_models_classes_import_RdfImporte
      * @return string
      */
     abstract  protected function getErrorMessage();
-
-
 }
