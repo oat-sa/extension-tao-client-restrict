@@ -1,35 +1,34 @@
 {
-
     "name": "oat-sa/extension-tao-client-restrict",
-    "description" : "",
-    "type" : "tao-extension",
-    "authors" : [
+    "description": "",
+    "type": "tao-extension",
+    "authors": [
         {
-        "name": "Open Assessment Technologies SA"
+            "name": "Open Assessment Technologies SA"
         }
     ],
-    "keywords" : [
+    "keywords": [
         "tao",
         "computer-based-assessment"
     ],
-    "homepage" : "http://www.taotesting.com",
-    "license" : [
+    "homepage": "http://www.taotesting.com",
+    "license": [
         "GPL-2.0-only"
     ],
-    "extra" : {
-        "tao-extension-name" : "taoClientRestrict"
+    "extra": {
+        "tao-extension-name": "taoClientRestrict"
     },
-    "minimum-stability" : "dev",
+    "minimum-stability": "dev",
     "require": {
         "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
-        "oat-sa/generis" : ">=15.17.0",
-        "oat-sa/tao-core" : ">=47.0.0",
-        "oat-sa/extension-tao-delivery" : ">=15.0.0",
-        "oat-sa/extension-tao-clientdiag" : ">=8.0.0"
+        "oat-sa/generis": ">=15.22",
+        "oat-sa/tao-core": ">=50.24.6",
+        "oat-sa/extension-tao-delivery": ">=15.0.0",
+        "oat-sa/extension-tao-clientdiag": ">=8.0.0"
     },
-    "autoload" : {
-        "psr-4" : {
-            "oat\\taoClientRestrict\\" : ""
+    "autoload": {
+        "psr-4": {
+            "oat\\taoClientRestrict\\": ""
         }
     }
 }
