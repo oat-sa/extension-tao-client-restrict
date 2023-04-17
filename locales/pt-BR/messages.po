@@ -1,0 +1,121 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 3.3.0-sprint104\n"
+"PO-Revision-Date: 2019-07-05T09:09:33\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: en-US\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#, tao-public
+msgid "Add"
+msgstr ""
+
+#, tao-public
+msgid "Browser Lists"
+msgstr ""
+
+msgid "Checking the browser version..."
+msgstr ""
+
+msgid "Checking the os version..."
+msgstr ""
+
+msgid "Compatible"
+msgstr ""
+
+msgid "Data imported successfully"
+msgstr ""
+
+#, tao-public
+msgid "Delete"
+msgstr "Excluir"
+
+msgid "Edit Authorized Operation System"
+msgstr ""
+
+msgid "Edit Authorized Web Browser"
+msgstr ""
+
+#, tao-public
+msgid "Export"
+msgstr ""
+
+#, tao-public
+msgid "Import"
+msgstr ""
+
+msgid "Instance saved"
+msgstr ""
+
+msgid "Issue"
+msgstr ""
+
+#, tao-public
+msgid "New Class"
+msgstr ""
+
+msgid "Not Compatible"
+msgstr ""
+
+msgid "Operating system version"
+msgstr ""
+
+#, tao-public
+msgid "OS Lists"
+msgstr ""
+
+msgid "Pass – Your browser is approved"
+msgstr ""
+
+msgid "Pass – Your Operating System is approved"
+msgstr ""
+
+#, tao-public
+msgid "Properties"
+msgstr ""
+
+msgid "Resource not imported due to multiple super classes"
+msgstr ""
+
+msgid "Resource not imported due to multiple types"
+msgstr ""
+
+msgid "Return"
+msgstr "Retorne"
+
+#, tao-public
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Successfully imported \"%s"
+msgstr ""
+
+msgid "Successfully imported class \"%s"
+msgstr ""
+
+msgid "The system is unable to start this assessment because you are attempting to launch it using an unsupported browser or operating system.  Please contact your proctor or support for assistance"
+msgstr ""
+
+msgid "Web browser version"
+msgstr ""
+
+#, tao-public
+msgid "Web Browsers Lists"
+msgstr ""
+
+msgid "You are prevented from launching an assessment."
+msgstr ""
+
+msgid "You should only import OS List data"
+msgstr ""
+
+msgid "You should only import Web Browser List data"
+msgstr ""
+
