@@ -1,0 +1,72 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TAO 2023.05\n"
+"PO-Revision-Date: 2023-04-18T13:40:49\n"
+"Last-Translator: TAO Translation Team <translation@tao.lu>\n"
+"MIME-Version: 1.0\n"
+"Language: pt-BR\n"
+"sourceLanguage: en-US\n"
+"targetLanguage: pt-BR\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ApprovedBrowser
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Approved Browsers"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ApprovedBrowser
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Approved Browsers"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictBrowserUsage
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Restrict Browser Usage"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictBrowserUsage
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Restrict Browser Usage"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ApprovedOS
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Approved OSs"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ApprovedOS
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Approved OSs"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictOSUsage
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Restrict OS Usage"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#RestrictOSUsage
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Restrict OS Usage"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#CheckMode
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Check Enable"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#CheckMode
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Check Enable"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ComplyEnabled
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "Enable"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ComplyEnabled
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Enable"
+msgstr ""
+
