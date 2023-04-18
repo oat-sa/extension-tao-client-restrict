@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 2023.05\n"
-"PO-Revision-Date: 2023-04-18T13:40:49\n"
+"PO-Revision-Date: 2023-04-18T16:06:52\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pt-BR\n"
@@ -35,7 +35,7 @@ msgstr ""
 
 #, tao-public
 msgid "Delete"
-msgstr "Excluir"
+msgstr ""
 
 msgid "Edit Authorized Operation System"
 msgstr ""
@@ -88,11 +88,11 @@ msgid "Resource not imported due to multiple types"
 msgstr ""
 
 msgid "Return"
-msgstr "Retorne"
+msgstr ""
 
 #, tao-public
 msgid "Settings"
-msgstr "Configurações"
+msgstr ""
 
 msgid "Successfully imported \"%s"
 msgstr ""
