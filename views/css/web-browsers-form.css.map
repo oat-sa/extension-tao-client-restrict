@@ -1,9 +1,1 @@
-{
-	"version": 3,
-	"file": "web-browsers-form.css",
-	"sources": [
-		"../scss/web-browsers-form.scss"
-	],
-	"names": [],
-	"mappings": "AAAA,AACE,iBADe,CAAC,WAAW,CAC3B,KAAK,CAAA,AAAA,IAAC,CAAK,MAAM,AAAX,EADR,iBAAiB,CAAC,WAAW,CACP,MAAM,AAAC,CACzB,KAAK,CAAE,GAAG,CACX,AAHH,AAIE,iBAJe,CAAC,WAAW,CAI3B,UAAU,AAAA,cAAc,AAAC,CACvB,KAAK,CAAE,KAAK,CACZ,WAAW,CAAE,IAAI,CAClB"
-}
+{"version":3,"sourceRoot":"","sources":["../scss/web-browsers-form.scss"],"names":[],"mappings":"AACE,oFACE,UAEF,uDACE,YACA","file":"web-browsers-form.css"}
